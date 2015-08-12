@@ -1,0 +1,20 @@
+server {
+  listen 80;
+
+  server_tokens off; # Doesn't broadcast version level of server software
+  server_name web; # TODO: replace with environment variable
+
+  index index.html index.htm;
+
+  location / {
+    # Check for file or folder first, otherwise rewrite to front controller
+    try_files $uri $uri/ =404;
+  }
+
+  # Protect against accessing hidden files
+  location ~ /\. {
+    access_log off;
+    log_not_found off;
+    deny all;
+  }
+}
