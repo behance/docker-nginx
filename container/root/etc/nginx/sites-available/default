@@ -1,13 +1,17 @@
+# NOTE: the syntax in most directives is sadly duplicated in run.sh,
+# in order to replace at runtime with `sed`, therefore, check for changes in both places
 server {
   listen 80;
 
   server_tokens off; # Doesn't broadcast version level of server software
-  server_name web; # TODO: replace with environment variable
 
+  # Replace with env variable SERVER_INDEX
   index index.html index.htm;
 
+  # Replace with env variable SERVER_MAX_BODY_SIZE
+  client_max_body_size 1m;
+
   location / {
-    # Check for file or folder first, otherwise rewrite to front controller
     try_files $uri $uri/ =404;
   }
 
