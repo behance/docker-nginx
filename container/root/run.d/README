@@ -1,0 +1,6 @@
+### Runtime commands
+---
+
+Allows children to inject things into the run process.
+
+Drop bash scripts in here to be executed by entrypoint during startup.
