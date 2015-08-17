@@ -13,3 +13,6 @@ Variable | Example | Description
 
 To inject things into the runtime process, add shell scripts (ending in .sh) into the
 `/run.d` folder. These will be executed during container start.
+
+- If script terminates with a non-zero exit code, container will stop, terminating with the script's exit code, unless...
+- If script terminates with exit code of 99, this will signal the container to stop cleanly. This can be used for multi-stage builds that can be committed
