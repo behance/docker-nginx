@@ -8,10 +8,14 @@ echo '[nginx] setting sensible defaults'
 sed -i "s/worker_processes [0-9]\+/worker_processes $(nproc)/" $CONFIG_SERVER
 sed -i "s/worker_connections [0-9]\+/worker_connections 1024/" $CONFIG_SERVER
 
+# Uncomment prod-level tokens (none)
+sed -i "s/\#\ server_tokens/server_tokens/" $CONFIG_SERVER
+
+
 echo '[nginx] piping logs to STDOUT'
-# Ensure nginx is configured to write logs to STDOUT
-# Also set log_format to output SERVER_APP_NAME placeholder
-sed -i "s/access_log [a-z\/\.\;]\+/            log_format main \'\$remote_addr - \$remote_user [\$time_local] \"\$request\" \$status \$bytes_sent \"\$http_referer\" \"\$http_user_agent\" ${SERVER_APP_NAME}\';\n        access_log \/dev\/stdout main;\n/" $CONFIG_SERVER
+
+# Also set log_format to output SERVER_APP_NAME placeholder (when available)
+sed -i "s/access_log [a-z\/\.\;]\+/    log_format main \'\$remote_addr - \$remote_user [\$time_local] \"\$request\" \$status \$bytes_sent \"\$http_referer\" \"\$http_user_agent\" ${SERVER_APP_NAME}\';\n    access_log \/dev\/stdout main;\n/" $CONFIG_SERVER
 sed -i "s/error_log [a-z\/\.\ \;]\+/error_log \/dev\/stdout info;/" $CONFIG_SERVER
 
 if [[ $SERVER_MAX_BODY_SIZE ]]
@@ -24,4 +28,10 @@ if [[ $SERVER_INDEX ]]
 then
   echo "[nginx] server index is ${SERVER_INDEX}"
   sed -i "s/index index.html index.htm/index ${SERVER_INDEX}/" $CONFIG_SITE
+fi
+
+if [[ $SERVER_GZIP_OPTIONS ]]
+then
+    # Uncomments all gzip handling options
+  sed -i "s/\#\ gzip/gzip/" $CONFIG_SERVER
 fi

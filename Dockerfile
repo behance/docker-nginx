@@ -1,6 +1,8 @@
 FROM ubuntu:14.04.2
 MAINTAINER Bryan Latten <latten@adobe.com>
 
+ENV SIGNAL_BUILD_STOP 99
+
 # Install pre-reqs, security updates
 RUN apt-get update && \
     apt-get upgrade -yq && \
