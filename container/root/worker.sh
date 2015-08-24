@@ -49,6 +49,7 @@ process_name=%(program_name)s%(process_num)s
 numprocs=${WORKER_QUANTITY}
 autorestart=true
 redirect_stderr=true
+stdout_logfile_maxbytes=0
 stdout_logfile=/dev/stdout" > $SUPERVISOR_CONF
 
 echo "[worker] entering supervisor"
