@@ -1,33 +1,23 @@
 #!/bin/bash
-RUN_SCRIPTS=/run.d
-STATUS=0
 
-# Run shell scripts (ending in .sh) in run.d directory
+# Begin startup sequence
+/init.sh
 
-# When .sh run scripts fail (exit non-zero), container run will fail
-# NOTE: if a .sh script exits with 99, this is our stop signal, container will exit cleanly
+STATUS=$?  # Captures exit code from script that was run
 
-for file in $RUN_SCRIPTS/*.sh; do
+# TODO this exit code detection is also present in worker.sh, needs to be combined
+if [[ $STATUS == $SIGNAL_BUILD_STOP ]]
+then
+  echo "[run] container exit requested"
+  exit # Exit cleanly
+fi
 
-  echo "[run.d] executing ${file}"
+if [[ $STATUS != 0 ]]
+then
+  echo "[run] failed to init"
+  exit $STATUS
+fi
 
-  /bin/bash $file
-
-  STATUS=$?  # Captures exit code from script that was run
-
-  if [[ $STATUS == 99 ]]
-  then
-    echo "[run.d] exit signalled - ${file}"
-    exit # Exit cleanly
-  fi
-
-  if [[ $STATUS != 0 ]]
-  then
-    echo "[run.d] failed executing - ${file}"
-    exit $STATUS
-  fi
-
-done
-
+# Primary command - starting webserver
 echo "[nginx] start (foreground)"
 exec /usr/sbin/nginx -g "daemon off;"

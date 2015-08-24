@@ -17,3 +17,10 @@ To inject things into the runtime process, add shell scripts (ending in .sh) int
 
 - If script terminates with a non-zero exit code, container will stop, terminating with the script's exit code, unless...
 - If script terminates with exit code of $SIGNAL_BUILD_STOP (99), this will signal the container to stop cleanly. This can be used for multi-stage builds that can be committed
+
+
+### Long-running processes (workers)
+
+`docker run {image_id} /worker.sh 3 /bin/binary -parameters -that -binary -receives`
+
+Runs 3 copies of `/bin/binary` that receives any arguments as parameters
