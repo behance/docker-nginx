@@ -5,12 +5,12 @@ CONFIG_SERVER=/etc/nginx/nginx.conf
 echo '[nginx] setting sensible defaults'
 
 # Configure nginx to use as many workers as there are cores for the running container
+# NOTE: worker_processes is only replaced when *not* set to auto
 sed -i "s/worker_processes [0-9]\+/worker_processes $(nproc)/" $CONFIG_SERVER
 sed -i "s/worker_connections [0-9]\+/worker_connections 1024/" $CONFIG_SERVER
 
 # Uncomment prod-level tokens (none)
 sed -i "s/\#\ server_tokens/server_tokens/" $CONFIG_SERVER
-
 
 echo '[nginx] piping logs to STDOUT'
 
