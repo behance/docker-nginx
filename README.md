@@ -8,6 +8,7 @@ Variable | Example | Description
 `SERVER_INDEX` | `SERVER_INDEX index.html index.html index.php` | Changes the default pages to hit for folder and web roots
 `SERVER_APP_NAME` | `SERVER_APP_NAME='view'` | Sets a kv pair to be consumed by logging service for easy parsing and searching
 `SERVER_GZIP_OPTIONS` | `SERVER_GZIP_OPTIONS=1` | Allows default set of static content to be served gzipped
+`SERVER_SENDFILE` | `SERVER_SENDFILE=off` | Allows runtime to specify value of nginx's `sendfile` (default, on)
 
 
 ### Runtime Commands
