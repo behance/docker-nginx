@@ -19,6 +19,12 @@ echo '[nginx] piping logs to STDOUT'
 sed -i "s/access_log \/var\/log\/nginx\/access\.log;/    log_format main \'\$remote_addr - \$remote_user [\$time_local] \"\$request\" \$status \$bytes_sent \"\$http_referer\" \"\$http_user_agent\" ${SERVER_APP_NAME}\';\n access_log \/dev\/stdout main;\n/" $CONFIG_SERVER
 sed -i "s/error_log [a-z\/\.\ \;]\+/error_log \/dev\/stdout info;/" $CONFIG_SERVER
 
+if [[ $SERVER_SENDFILE ]]
+then
+  echo "[nginx] server sendfile status is ${SERVER_SENDFILE}"
+  sed -i "s/sendfile on/sendfile ${SERVER_SENDFILE}/" $CONFIG_SERVER
+fi
+
 if [[ $SERVER_MAX_BODY_SIZE ]]
 then
   echo "[nginx] server client max body is ${SERVER_MAX_BODY_SIZE}"
