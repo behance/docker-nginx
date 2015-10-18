@@ -7,12 +7,13 @@ ENV SIGNAL_BUILD_STOP 99
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
 ENV CONTAINER_ROLE=web
 
-# Install pre-reqs, security updates
+# IMPORTANT: update is *part* of the upgrade statement to ensure the latest on each build.
+# Installs pre-reqs, security updates
 RUN apt-get update && \
     apt-get upgrade -yq && \
     apt-get -yq install \
-        openssl=1.0.1f-1ubuntu2.15 \
-        ca-certificates=20141019ubuntu0.14.04.1 \
+        openssl \
+        ca-certificates \
         software-properties-common \
         supervisor \
         nano
