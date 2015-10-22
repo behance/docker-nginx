@@ -34,12 +34,12 @@ do
     p)
       # path name
       MIGRATION_PATH=$OPTARG
-      echo "OPTARG: ${OPTARG}"
       echo "MIGRATION_PATH: $MIGRATION_PATH"
       ;;
     s)
       # script name
       MIGRATION_SCRIPT=$OPTARG
+      echo "MIGRATION_SCRIPT: $MIGRATION_SCRIPT"
       ;;
   esac
 done
