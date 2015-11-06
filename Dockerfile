@@ -18,10 +18,10 @@ RUN apt-get update && \
         supervisor \
         nano
 
-# Install latest nginx-stable
-RUN add-apt-repository ppa:nginx/stable -y && \
+# Install latest nginx (development PPA is actually mainline development)
+RUN add-apt-repository ppa:nginx/development -y && \
     apt-get update -yq && \
-    apt-get install -yq nginx=1.8.0-1+trusty1
+    apt-get install -yq nginx
 
 # Overlay the root filesystem from this repo
 COPY ./container/root /
