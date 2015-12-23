@@ -7,9 +7,15 @@ ENV SIGNAL_BUILD_STOP 99
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
 ENV CONTAINER_ROLE=web
 
-# IMPORTANT: update is *part* of the upgrade statement to ensure the latest on each build.
+# Used to pass in an apt source, for leveraging a local package source at build-time
+ARG APT_SOURCE
+
+ADD ./container/root/apt-cache.sh /
+
+# IMPORTANT: update must be part of the upgrade statement to ensure the latest on each build
 # Installs pre-reqs, security updates
-RUN apt-get update && \
+RUN ./apt-cache.sh && \
+    apt-get update && \
     apt-get upgrade -yq && \
     apt-get -yq install \
         openssl \
@@ -22,6 +28,9 @@ RUN apt-get update && \
 RUN add-apt-repository ppa:nginx/stable -y && \
     apt-get update -yq && \
     apt-get install -yq nginx=1.8.0-1+trusty1
+
+# IMPORTANT: since each child will be built in seemingly different environment, re-run this build-arg processor in a child
+ONBUILD ./apt-cache.sh
 
 # Overlay the root filesystem from this repo
 COPY ./container/root /
