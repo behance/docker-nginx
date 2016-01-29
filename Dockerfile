@@ -21,7 +21,7 @@ RUN apt-get update && \
 # Install latest nginx-stable
 RUN add-apt-repository ppa:nginx/stable -y && \
     apt-get update -yq && \
-    apt-get install -yq nginx=1.8.0-1+trusty1
+    apt-get install -yq nginx
 
 # Overlay the root filesystem from this repo
 COPY ./container/root /
