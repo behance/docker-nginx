@@ -18,8 +18,8 @@ RUN apt-get update && \
         supervisor \
         nano
 
-# Install latest nginx-stable
-RUN add-apt-repository ppa:nginx/stable -y && \
+# Install latest nginx (development PPA is actually mainline development)
+RUN add-apt-repository ppa:nginx/development -y && \
     apt-get update -yq && \
     apt-get install -yq nginx
 
