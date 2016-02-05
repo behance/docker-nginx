@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # Begin startup sequence
-/init.sh
+/bin/sh -e /init.sh
 
 STATUS=$?  # Captures exit code from script that was run
 
