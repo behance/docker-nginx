@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 RUN_SCRIPTS=/run.d
 STATUS=0
@@ -13,7 +13,7 @@ for file in $RUN_SCRIPTS/*.sh; do
   echo "[init] executing ${file}"
 
   # Note: -e will enforce that any subcommand that fails will fail the entire script run
-  /bin/bash -e $file
+  /bin/sh -e $file
 
   STATUS=$?  # Captures exit code from script that was run
 

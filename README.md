@@ -9,6 +9,8 @@ Variable | Example | Description
 `SERVER_APP_NAME` | `SERVER_APP_NAME='view'` | Sets a kv pair to be consumed by logging service for easy parsing and searching
 `SERVER_GZIP_OPTIONS` | `SERVER_GZIP_OPTIONS=1` | Allows default set of static content to be served gzipped
 `SERVER_SENDFILE` | `SERVER_SENDFILE=off` | Allows runtime to specify value of nginx's `sendfile` (default, on)
+`SERVER_KEEPALIVE` | `SERVER_KEEPALIVE=30` | Define HTTP 1.1's keepalive timeout
+`SERVER_WORKER_CONNECTIONS` | `SERVER_WORKER_CONNECTIONS=2048` | Sets up the number of connections for worker processes
 
 
 ### Runtime Commands

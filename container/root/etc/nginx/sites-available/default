@@ -1,5 +1,3 @@
-# NOTE: the syntax in most directives is sadly duplicated in run.sh,
-# in order to replace at runtime with `sed`, therefore, check for changes in both places
 server {
   listen 80;
 
