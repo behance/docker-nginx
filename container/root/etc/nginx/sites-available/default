@@ -1,7 +1,8 @@
 server {
   listen 80;
 
-  server_tokens off; # Doesn't broadcast version level of server software
+  # Doesn't broadcast version level of server software
+  server_tokens off;
 
   # Replace with env variable SERVER_INDEX
   index index.html index.htm;
