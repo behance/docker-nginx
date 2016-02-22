@@ -44,3 +44,11 @@ then
   echo "[nginx] setting worker connection limit ${SERVER_WORKER_CONNECTIONS}"
   sed -i "s/\worker_connections .*;/worker_connections ${SERVER_WORKER_CONNECTIONS};/" $CONF_NGINX_SERVER
 fi
+
+if [[ $SERVER_LOG_MINIMAL ]]
+then
+  echo "[nginx] enabling minimal logging"
+    # Uncomments all gzip handling options
+  sed -i "s/access_log \/dev\/stdout .*;/access_log \/dev\/stdout minimal;/" $CONF_NGINX_SERVER
+fi
+
