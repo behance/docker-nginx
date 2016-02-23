@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Entrypoint for utilizing as a worker pool instead of a web server
 # Based on configuration, can run multiple instances of a single worker process
