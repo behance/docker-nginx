@@ -27,10 +27,13 @@ RUN add-apt-repository ppa:nginx/development -y && \
     apt-get update -yq && \
     apt-get install -yq nginx \
     && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* \
+    && \
+    setcap cap_net_bind_service=+ep /usr/sbin/nginx
 
 # # Overlay the root filesystem from this repo
 COPY ./container/root /
 
+USER www-data
 EXPOSE 80
 CMD ["/bin/bash", "/run.sh"]
