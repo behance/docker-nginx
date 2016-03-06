@@ -4,6 +4,7 @@
 # Based on configuration, can run multiple instances of a single worker process
 
 SUPERVISOR_CONF=/etc/supervisor/conf.d/worker.conf
+SERVICES_D=/etc/services.d
 
 # Signal to init processes to avoid any webserver startup
 export CONTAINER_ROLE='worker'
@@ -42,17 +43,19 @@ fi
 
 echo "[worker] command: '${WORKER_COMMAND}' quantity: ${WORKER_QUANTITY}"
 
-echo "\
-[program:worker]
-command=${WORKER_COMMAND}
-process_name=%(program_name)s%(process_num)s
-numprocs=${WORKER_QUANTITY}
-autorestart=true
-redirect_stderr=true
-stdout_logfile_maxbytes=0
-stdout_logfile=/dev/stdout" > $SUPERVISOR_CONF
+for i in `seq 1 $WORKER_QUANTITY`;
+do
+  SERVICE_FOLDER="${SERVICES_D}/worker-${i}"
+  mkdir $SERVICE_FOLDER
+  echo "\
+#!/usr/bin/execlineb -P
 
-echo "[worker] entering supervisor"
+with-contenv
+s6-setuidgid ${NOT_ROOT_USER}
+${WORKER_COMMAND}" > "${SERVICE_FOLDER}/run"
+done
 
-# Primary command - starting supervisor after writing with worker program config file
-exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon
+# Start process manager
+echo "[run] starting process manager"
+exec /init
+
