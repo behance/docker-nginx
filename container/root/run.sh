@@ -18,6 +18,6 @@ then
   exit $STATUS
 fi
 
-# Primary command - starting webserver
-echo "[nginx] start (foreground)"
-exec /usr/sbin/nginx -g "daemon off;"
+# Start process manager
+echo "[run] starting process manager"
+exec /init
