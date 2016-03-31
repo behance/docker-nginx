@@ -1,7 +1,11 @@
 #!/usr/bin/execlineb -S1
 
 # @see https://github.com/just-containers/s6-overlay/issues/101
+
+# Rely on container platform to restart this container on crash (marathon/docker-swarm/kubernetes)
+# BUT, when container is SIGNALLED to stop, don't interfere
 if { s6-test ${1} -ne 0 }
 if { s6-test ${1} -ne 256 }
 
+# When nginx process dies, the container should come down with it
 s6-svscanctl -t /var/run/s6/services
