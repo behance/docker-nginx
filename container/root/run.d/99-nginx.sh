@@ -9,5 +9,10 @@ then
   setcap cap_net_bind_service=+ep /usr/sbin/nginx
 
   # Enable nginx as a supervised service
-  ln -s /etc/services-available/nginx /etc/services.d/nginx
+  if [ -d /etc/services.d/nginx ]
+  then
+    echo '[run] web server already enabled'
+  else
+    ln -s /etc/services-available/nginx /etc/services.d/nginx
+  fi
 fi
