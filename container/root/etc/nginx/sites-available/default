@@ -1,5 +1,5 @@
 server {
-  listen 80;
+  listen 8080;
 
   # Doesn't broadcast version level of server software
   server_tokens off;
