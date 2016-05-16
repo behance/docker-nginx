@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
@@ -48,7 +48,8 @@ COPY ./container/root /
 RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
     rm /tmp/s6-overlay-amd64.tar.gz
 
-EXPOSE 80
+# Using a non-privileged port to prevent having to use setcap internally
+EXPOSE 8080
 
 # NOTE: intentionally NOT using s6 init as the entrypoint
 # This would prevent container debugging if any of those service crash
