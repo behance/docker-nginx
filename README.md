@@ -6,6 +6,7 @@ Integrates S6 process supervisor for zombie reaping (as PID 1) and boot coordina
 ### Expectations
 
 Applications using this as a container parent must copy their html/app into the `/var/www/html` folder
+NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
 
 
 
