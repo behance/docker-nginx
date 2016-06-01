@@ -1,13 +1,14 @@
 # docker-nginx
 Provides base OS, patches and stable nginx for quick and easy spinup.
-Integrates S6 process supervisor for zombie reaping (as PID 1) and boot coordination.
+Integrates S6 process supervisor `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation
+
+
 @see https://github.com/just-containers/s6-overlay
 
 ### Expectations
 
 Applications using this as a container parent must copy their html/app into the `/var/www/html` folder
 NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
-
 
 
 ### Environment Variables
