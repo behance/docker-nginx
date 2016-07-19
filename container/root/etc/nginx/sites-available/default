@@ -1,6 +1,8 @@
 server {
   listen 8080;
 
+  root /var/www/html;
+
   # Doesn't broadcast version level of server software
   server_tokens off;
 
