@@ -19,7 +19,12 @@ RUN apt-get update && \
     # Install pre-reqs \
     apt-get install -yqq \
         software-properties-common \
+        curl \
     && \
+    # Add goss for local testing
+    curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.3/goss-linux-amd64 -o /usr/local/bin/goss && \
+    chmod +x /usr/local/bin/goss && \
+    apt-get remove --purge -yq curl && \
     # Install latest nginx (development PPA is actually mainline development) \
     add-apt-repository ppa:nginx/development -y && \
     apt-get update -yqq && \
@@ -49,6 +54,8 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
     rm /tmp/s6-overlay-amd64.tar.gz && \
     # Set nginx to listen on defined port \
     sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE
+
+RUN goss -g goss.nginx.yaml validate
 
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}
