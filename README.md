@@ -6,10 +6,11 @@ Ubuntu used by default, Alpine builds also available tagged as `-alpine`
 
 
 Provides base OS, patches and stable nginx for quick and easy spinup.
-Integrates S6 process supervisor `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation
 
+[S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation  
 
-@see https://github.com/just-containers/s6-overlay
+[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing  
+
 
 ### Expectations
 
