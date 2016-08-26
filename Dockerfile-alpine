@@ -22,7 +22,11 @@ RUN apk update && \
         bash \
         grep \
         nginx \
+        curl \
     && \
+    curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.3/goss-linux-amd64 -o /usr/local/bin/goss && \
+    chmod +x /usr/local/bin/goss && \
+    apk del curl && \
     rm -rf /var/cache/apk/*
 
 # Overlay the root filesystem from this repo
@@ -37,6 +41,7 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
     bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx"
 
+RUN goss -g goss.nginx.yaml validate
 
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}

@@ -1,0 +1,10 @@
+group:
+  www-data:
+    exists: true
+command:
+  nginx -v:
+    exit-status: 0
+    stderr: []
+  nginx -t:
+    exit-status: 0
+    stderr: []
