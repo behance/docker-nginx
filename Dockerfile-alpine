@@ -41,7 +41,8 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
     bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx"
 
-RUN goss -g goss.nginx.yaml validate
+RUN goss -g goss.nginx.yaml validate && \
+    /tmp/aufs_hack.sh
 
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}

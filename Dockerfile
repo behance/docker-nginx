@@ -55,7 +55,8 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
     # Set nginx to listen on defined port \
     sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE
 
-RUN goss -g goss.nginx.yaml validate
+RUN goss -g goss.nginx.yaml validate && \
+    /tmp/aufs_hack.sh
 
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}
