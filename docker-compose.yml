@@ -9,6 +9,7 @@ ubuntu:
     S6_KILL_GRACETIME: 1
   volumes:
    - ./container/root/goss.nginx.yaml:/goss.nginx.yaml
+   - ./container/root/var/www/html:/var/www/html
 alpine:
   build: .
   dockerfile: Dockerfile-alpine
