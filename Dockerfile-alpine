@@ -11,7 +11,9 @@ ENV SIGNAL_BUILD_STOP=99 \
     NOT_ROOT_USER=www-data \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     S6_KILL_FINISH_MAXTIME=5000 \
-    S6_KILL_GRACETIME=3000
+    S6_KILL_GRACETIME=3000 \
+    S6_VERSION=v1.18.1.5 \
+    GOSS_VERSION=v0.2.3
 
 # Create an unprivileged user
 RUN adduser -D -S -H $NOT_ROOT_USER
@@ -24,7 +26,12 @@ RUN apk update && \
         nginx \
         curl \
     && \
-    curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.3/goss-linux-amd64 -o /usr/local/bin/goss && \
+    # Add S6 for zombie reaping, boot-time coordination, signal transformation/distribution \
+    curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz -o /tmp/s6.tar.gz && \
+    tar xzf /tmp/s6.tar.gz -C / && \
+    rm /tmp/s6.tar.gz && \
+    # Add goss for local, serverspec-like testing \
+    curl -L https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 -o /usr/local/bin/goss && \
     chmod +x /usr/local/bin/goss && \
     apk del curl && \
     rm -rf /var/cache/apk/*
@@ -32,13 +39,11 @@ RUN apk update && \
 # Overlay the root filesystem from this repo
 COPY ./container/root /
 
-# Add S6 overlay build, to avoid having to build from source
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
-    rm /tmp/s6-overlay-amd64.tar.gz && \
-    # Set nginx to listen on defined port \
-    sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
-    # Fix permissions to run unprivileged
-    bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
+# Set nginx to listen on defined port
+# Fix permissions to run unprivileged
+# NOTE: order of operations is important, new config had to already installed from repo (above)
+RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
+    bash -c "chown ${NOT_ROOT_USER}:${NOT_ROOT_USER} /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx"
 
 RUN goss -g goss.nginx.yaml validate && \
