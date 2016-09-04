@@ -11,7 +11,9 @@ ENV SIGNAL_BUILD_STOP=99 \
     NOT_ROOT_USER=www-data \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     S6_KILL_FINISH_MAXTIME=5000 \
-    S6_KILL_GRACETIME=3000
+    S6_KILL_GRACETIME=3000 \
+    S6_VERSION=v1.18.1.5 \
+    GOSS_VERSION=v0.2.3
 
 # Ensure base system is up to date
 RUN apt-get update && \
@@ -21,10 +23,13 @@ RUN apt-get update && \
         software-properties-common \
         curl \
     && \
-    # Add goss for local testing
-    curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.3/goss-linux-amd64 -o /usr/local/bin/goss && \
+    # Add S6 for zombie reaping, boot-time coordination, signal transformation/distribution
+    curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz -o /tmp/s6.tar.gz && \
+    tar xzf /tmp/s6.tar.gz -C / && \
+    rm /tmp/s6.tar.gz && \
+    # Add goss for local, serverspec-like testing \
+    curl -L https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 -o /usr/local/bin/goss && \
     chmod +x /usr/local/bin/goss && \
-    apt-get remove --purge -yq curl && \
     # Install latest nginx (development PPA is actually mainline development) \
     add-apt-repository ppa:nginx/development -y && \
     apt-get update -yqq && \
@@ -32,6 +37,7 @@ RUN apt-get update && \
     && \
     # Perform cleanup, ensure unnecessary packages are removed \
     apt-get remove --purge -yq \
+        curl \
         manpages \
         manpages-dev \
         man-db \
@@ -49,11 +55,9 @@ RUN apt-get update && \
 # Overlay the root filesystem from this repo
 COPY ./container/root /
 
-# Add S6 overlay build, to avoid having to build from source
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
-    rm /tmp/s6-overlay-amd64.tar.gz && \
-    # Set nginx to listen on defined port \
-    sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE
+# Set nginx to listen on defined port
+# NOTE: order of operations is important, new config had to already installed from repo (above)
+RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE
 
 RUN goss -g goss.nginx.yaml validate && \
     /tmp/aufs_hack.sh
