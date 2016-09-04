@@ -1,3 +1,5 @@
+gossfile:
+  ../../goss.base.yaml: {}
 group:
   www-data:
     exists: true
