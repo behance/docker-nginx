@@ -1,6 +1,3 @@
-# Shouldn't need to be two separate statements, something is requiring it
 /tmp/.nginx true www-data 0644 2700
 /tmp true www-data 0644 2700
-
-# Unfortunately, even if it isn't used, it gets a lock by nginx
 /var/log/nginx/error.log true www-data 0644 2700

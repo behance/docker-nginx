@@ -1,17 +1,14 @@
-FROM ubuntu:14.04
+FROM behance/docker-base:1.3
 MAINTAINER Bryan Latten <latten@adobe.com>
 
-# Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
-# Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
-ENV SIGNAL_BUILD_STOP=99 \
-    CONTAINER_ROLE=web \
+ENV CONTAINER_ROLE=web \
     CONTAINER_PORT=8080 \
     CONF_NGINX_SITE="/etc/nginx/sites-available/default" \
     CONF_NGINX_SERVER="/etc/nginx/nginx.conf" \
-    NOT_ROOT_USER=www-data \
-    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
-    S6_KILL_FINISH_MAXTIME=5000 \
-    S6_KILL_GRACETIME=3000
+    NOT_ROOT_USER=www-data
+
+# Using a non-privileged port to prevent having to use setcap internally
+EXPOSE ${CONTAINER_PORT}
 
 # Ensure base system is up to date
 RUN apt-get update && \
@@ -19,12 +16,7 @@ RUN apt-get update && \
     # Install pre-reqs \
     apt-get install -yqq \
         software-properties-common \
-        curl \
     && \
-    # Add goss for local testing
-    curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.3/goss-linux-amd64 -o /usr/local/bin/goss && \
-    chmod +x /usr/local/bin/goss && \
-    apt-get remove --purge -yq curl && \
     # Install latest nginx (development PPA is actually mainline development) \
     add-apt-repository ppa:nginx/development -y && \
     apt-get update -yqq && \
@@ -39,27 +31,24 @@ RUN apt-get update && \
         make \
         unattended-upgrades \
         python* \
-        && \
+    && \
     apt-get autoclean -y && \
     apt-get autoremove -y && \
     rm -rf /var/lib/{cache,log}/ && \
-    rm -rf /var/lib/apt/lists/ && \
-    rm -rf /tmp/* /var/tmp/*
+    rm -rf /tmp/* /var/tmp/* && \
+    rm -rf /var/lib/apt/lists/*.lz4
 
 # Overlay the root filesystem from this repo
 COPY ./container/root /
 
-# Add S6 overlay build, to avoid having to build from source
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
-    rm /tmp/s6-overlay-amd64.tar.gz && \
-    # Set nginx to listen on defined port \
-    sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE
+# Set nginx to listen on defined port
+# NOTE: order of operations is important, new config had to already installed from repo (above)
+RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
+    # Make temp directory for .nginx runtime files \
+    mkdir /tmp/.nginx
 
-RUN goss -g goss.nginx.yaml validate && \
-    /tmp/aufs_hack.sh
-
-# Using a non-privileged port to prevent having to use setcap internally
-EXPOSE ${CONTAINER_PORT}
+RUN goss -g /tests/nginx/base.goss.yaml validate && \
+    /aufs_hack.sh
 
 # NOTE: intentionally NOT using s6 init as the entrypoint
 # This would prevent container debugging if any of those service crash
