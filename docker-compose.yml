@@ -7,6 +7,7 @@ ubuntu:
     SERVER_APP_NAME: docker-test
     S6_KILL_FINISH_MAXTIME: 1
     S6_KILL_GRACETIME: 1
+    SERVER_WORKER_PROCESSES: 1
   volumes:
    - ./container/root/goss.nginx.yaml:/goss.nginx.yaml
    - ./container/root/var/www/html:/var/www/html
@@ -20,3 +21,4 @@ alpine:
     SERVER_APP_NAME: docker-test
     S6_KILL_FINISH_MAXTIME: 1
     S6_KILL_GRACETIME: 1
+    SERVER_WORKER_PROCESSES: 1
