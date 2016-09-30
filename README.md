@@ -28,6 +28,7 @@ Variable | Example | Description
 `SERVER_GZIP_OPTIONS` | `SERVER_GZIP_OPTIONS=1` | Allows default set of static content to be served gzipped
 `SERVER_SENDFILE` | `SERVER_SENDFILE=off` | Allows runtime to specify value of nginx's `sendfile` (default, on)
 `SERVER_KEEPALIVE` | `SERVER_KEEPALIVE=30` | Define HTTP 1.1's keepalive timeout
+`SERVER_WORKER_PROCESSES` | `SERVER_WORKER_PROCESSES=4` | Set to the number of cores in the machine, or the number of cores allocated to container
 `SERVER_WORKER_CONNECTIONS` | `SERVER_WORKER_CONNECTIONS=2048` | Sets up the number of connections for worker processes
 `SERVER_LOG_MINIMAL` | `SERVER_LOG_MINIMAL=1` | Minimize the logging format, appropriate for development environments
 `S6_KILL_FINISH_MAXTIME` | `S6_KILL_FINISH_MAXTIME=1000` | Wait time (in ms) for zombie reaping before sending a kill signal

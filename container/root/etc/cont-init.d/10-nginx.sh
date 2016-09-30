@@ -39,6 +39,12 @@ then
   sed -i "s/\keepalive_timeout .*;/keepalive_timeout ${SERVER_KEEPALIVE};/" $CONF_NGINX_SERVER
 fi
 
+if [[ $SERVER_WORKER_PROCESSES ]]
+then
+  echo "[nginx] setting worker processes ${SERVER_WORKER_PROCESSES}"
+  sed -i "s/\worker_processes .*;/worker_processes ${SERVER_WORKER_PROCESSES};/" $CONF_NGINX_SERVER
+fi
+
 if [[ $SERVER_WORKER_CONNECTIONS ]]
 then
   echo "[nginx] setting worker connection limit ${SERVER_WORKER_CONNECTIONS}"
