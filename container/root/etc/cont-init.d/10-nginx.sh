@@ -54,7 +54,23 @@ fi
 if [[ $SERVER_LOG_MINIMAL ]]
 then
   echo "[nginx] enabling minimal logging"
-    # Uncomments all gzip handling options
   sed -i "s/access_log \/dev\/stdout .*;/access_log \/dev\/stdout minimal;/" $CONF_NGINX_SERVER
 fi
 
+if [[ $SERVER_LARGE_CLIENT_HEADER_BUFFERS ]]
+then
+  echo "[nginx] setting large_client_header_buffers to ${SERVER_LARGE_CLIENT_HEADER_BUFFERS}"
+  sed -i "s/large_client_header_buffers .*;/large_client_header_buffers ${SERVER_LARGE_CLIENT_HEADER_BUFFERS};/" $CONF_NGINX_SERVER
+fi
+
+if [[ $SERVER_CLIENT_HEADER_BUFFER_SIZE ]]
+then
+  echo "[nginx] setting client_header_buffer_size to ${SERVER_CLIENT_HEADER_BUFFER_SIZE}"
+  sed -i "s/client_header_buffer_size .*;/client_header_buffer_size ${SERVER_CLIENT_HEADER_BUFFER_SIZE};/" $CONF_NGINX_SERVER
+fi
+
+if [[ $SERVER_CLIENT_BODY_BUFFER_SIZE ]]
+then
+  echo "[nginx] setting client_body_buffer_size to ${SERVER_CLIENT_BODY_BUFFER_SIZE}"
+  sed -i "s/client_body_buffer_size .*;/client_body_buffer_size ${SERVER_CLIENT_BODY_BUFFER_SIZE};/" $CONF_NGINX_SERVER
+fi
