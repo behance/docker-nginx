@@ -11,24 +11,14 @@ group:
 command:
   nginx -v:
     exit-status: 0
-    stderr: []
+    stderr: ['nginx/1.']
+    stdout: ['!/./']
   nginx -t:
     exit-status: 0
-    stderr: []
+    stderr: ['is ok']
+    stdout: ['!/./']
 
 file:
-  /etc/nginx/sites-available/default:
-    exists: true
-    contains:
-      - listen 8080;
-      - root /var/www/html;
-      - index index.html index.htm;
-      - client_max_body_size 1m;
-      - try_files $uri $uri/ =404;
-      - location ~ /\. {
-      - access_log off;
-      - log_not_found off;
-      - deny all;
   /etc/nginx/nginx.conf:
     exists: true
     contains:
@@ -51,8 +41,8 @@ file:
       - '/#{0}tcp_nodelay\s*on;/'
       - '/#{0}tcp_nopush\s*on;/'
       - '/#{0}include\s*mime.types;/'
-      - '/#{0}default_type  application/octet-stream;/'
-      - '/#{0}access_log /dev/stdout main;/'
+      - '/#{0}default_type\s*application/octet-stream;/'
+      - '/#{0}access_log\s*/dev/stdout\s*main;/'
       - '/#{0}sendfile\s*on;/'
       - '/#{0}keepalive_timeout\s*\d+;/'
       - '/#{0}client_body_temp_path\s*/tmp/.nginx/client_body;/'
