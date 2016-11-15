@@ -9,13 +9,20 @@ Provides base OS, patches and stable nginx for quick and easy spinup.
 
 [S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation  
 
-[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing  
+[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing.  
+
+See parent(s) [docker-base](https://github.com/behance/docker-base) for additional configuration  
 
 
 ### Expectations
 
 Applications using this as a container parent must copy their html/app into the `/var/www/html` folder
 NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
+
+
+### Security
+
+For Ubuntu-based variants, a convenience script is provided for security-only package updates. To run: `/bin/bash -e /security_updates.sh`
 
 
 ### Environment Variables
@@ -30,6 +37,9 @@ Variable | Example | Description
 `SERVER_KEEPALIVE` | `SERVER_KEEPALIVE=30` | Define HTTP 1.1's keepalive timeout
 `SERVER_WORKER_PROCESSES` | `SERVER_WORKER_PROCESSES=4` | Set to the number of cores in the machine, or the number of cores allocated to container
 `SERVER_WORKER_CONNECTIONS` | `SERVER_WORKER_CONNECTIONS=2048` | Sets up the number of connections for worker processes
+`SERVER_CLIENT_HEADER_BUFFER_SIZE` | `SERVER_CLIENT_HEADER_BUFFER_SIZE=16k | [docs](http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_buffer_size)
+`SERVER_LARGE_CLIENT_HEADER_BUFFERS` | `SERVER_LARGE_CLIENT_HEADER_BUFFERS=8 16k` | [docs](http://nginx.org/en/docs/http/ngx_http_core_module.html#large_client_header_buffers)
+`SERVER_CLIENT_BODY_BUFFER_SIZE` | `SERVER_CLIENT_BODY_BUFFER_SIZE=128k` | [docs](http://nginx.org/en/docs/http/ngx_http_core_module.html#client_body_buffer_size)
 `SERVER_LOG_MINIMAL` | `SERVER_LOG_MINIMAL=1` | Minimize the logging format, appropriate for development environments
 `S6_KILL_FINISH_MAXTIME` | `S6_KILL_FINISH_MAXTIME=1000` | Wait time (in ms) for zombie reaping before sending a kill signal
 `S6_KILL_GRACETIME` | `S6_KILL_GRACETIME=500` | Wait time (in ms) for S6 finish scripts before sending kill signal

@@ -1,8 +1,13 @@
 gossfile:
   ../../goss.base.yaml: {}
+
+user:
+  www-data:
+    exists: true
 group:
   www-data:
     exists: true
+
 command:
   nginx -v:
     exit-status: 0
@@ -10,3 +15,49 @@ command:
   nginx -t:
     exit-status: 0
     stderr: []
+
+file:
+  /etc/nginx/sites-available/default:
+    exists: true
+    contains:
+      - listen 8080;
+      - root /var/www/html;
+      - index index.html index.htm;
+      - client_max_body_size 1m;
+      - try_files $uri $uri/ =404;
+      - location ~ /\. {
+      - access_log off;
+      - log_not_found off;
+      - deny all;
+  /etc/nginx/nginx.conf:
+    exists: true
+    contains:
+      - '/#{0}worker_processes\s*(auto|\d+);/'
+      - '/#{0}pid\s*\/tmp\/.nginx\/nginx.pid;/'
+      - '/#{0}error_log\s*/dev/stdout warn;/'
+      - '/#{0}worker_rlimit_nofile\s*\d+;/'
+      - '/#{0}use\s*epoll\;/'
+      - '/#{0}multi_accept\s*on;/'
+      - '/#{0}worker_connections\s*\d+;/'
+      - '/#{0}server_tokens\s*off;/'
+      - '/#{0}large_client_header_buffers\s*\d+ \d+k;/'
+      - '/#{0}client_header_buffer_size\s*\d+k;/'
+      - '/#{0}client_body_buffer_size\s*\d+k;/'
+      - '/#{0}types_hash_max_size\s*\d+;/'
+      - '/#{0}send_timeout\s*\d+;/'
+      - '/#{0}client_body_timeout\s*\d+;/'
+      - '/#{0}reset_timedout_connection\s*on;/'
+      - '/#{0}keepalive_requests\s*\d+;/'
+      - '/#{0}tcp_nodelay\s*on;/'
+      - '/#{0}tcp_nopush\s*on;/'
+      - '/#{0}include\s*mime.types;/'
+      - '/#{0}default_type  application/octet-stream;/'
+      - '/#{0}access_log /dev/stdout main;/'
+      - '/#{0}sendfile\s*on;/'
+      - '/#{0}keepalive_timeout\s*\d+;/'
+      - '/#{0}client_body_temp_path\s*/tmp/.nginx/client_body;/'
+      - '/#{0}fastcgi_temp_path\s*/tmp/.nginx/fastcgi_temp;/'
+      - '/#{0}proxy_temp_path\s*/tmp/.nginx/proxy_temp;/'
+      - '/#{0}scgi_temp_path\s*/tmp/.nginx/scgi_temp;/'
+      - '/#{0}uwsgi_temp_path\s*/tmp/.nginx/uwsgi_temp;/'
+      - '/#{0}include\s*\/etc\/nginx\/sites-available\/\*;/'

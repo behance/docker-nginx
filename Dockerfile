@@ -1,4 +1,4 @@
-FROM behance/docker-base:1.3
+FROM behance/docker-base:1.4
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 ENV CONTAINER_ROLE=web \
@@ -10,17 +10,17 @@ ENV CONTAINER_ROLE=web \
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}
 
-# Ensure base system is up to date
-RUN apt-get update && \
-    apt-get upgrade -yqq && \
+# - Update security packages, only
+RUN /bin/bash -e /security_updates.sh && \
     # Install pre-reqs \
-    apt-get install -yqq \
+    apt-get install --no-install-recommends -yqq \
         software-properties-common \
     && \
     # Install latest nginx (development PPA is actually mainline development) \
     add-apt-repository ppa:nginx/development -y && \
     apt-get update -yqq && \
-    apt-get install -yqq nginx \
+    apt-get install -yqq --no-install-recommends \
+        nginx \
     && \
     # Perform cleanup, ensure unnecessary packages are removed \
     apt-get remove --purge -yq \
@@ -32,11 +32,7 @@ RUN apt-get update && \
         unattended-upgrades \
         python* \
     && \
-    apt-get autoclean -y && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/{cache,log}/ && \
-    rm -rf /tmp/* /var/tmp/* && \
-    rm -rf /var/lib/apt/lists/*.lz4
+    /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
 COPY ./container/root /
