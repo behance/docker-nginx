@@ -51,6 +51,7 @@ file:
       - '/#{0}scgi_temp_path\s*/tmp/.nginx/scgi_temp;/'
       - '/#{0}uwsgi_temp_path\s*/tmp/.nginx/uwsgi_temp;/'
       - '/#{0}include\s*\/etc\/nginx\/sites-available\/\*;/'
+      - '/#{0}include\s+\/etc\/nginx\/http_headers.conf;/'
 
 file:
   /etc/nginx/http_headers.conf:
