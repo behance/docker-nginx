@@ -51,3 +51,11 @@ file:
       - '/#{0}scgi_temp_path\s*/tmp/.nginx/scgi_temp;/'
       - '/#{0}uwsgi_temp_path\s*/tmp/.nginx/uwsgi_temp;/'
       - '/#{0}include\s*\/etc\/nginx\/sites-available\/\*;/'
+      - '/#{0}include\s+\/etc\/nginx\/http_headers.conf;/'
+
+file:
+  /etc/nginx/http_headers.conf:
+    exists: true
+    contains:
+      - '/#{0}add_header\s+X-XSS-Protection\s+"1;\s*mode=block"\s+always;/'
+      - '/#{0}add_header\s+X-Content-Type-Options\s+"nosniff"\s+always;/'
