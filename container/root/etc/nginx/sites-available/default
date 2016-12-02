@@ -1,8 +1,6 @@
 server {
   listen 8080;
 
-  include /etc/nginx/http_headers.conf;
-
   root /var/www/html;
 
   # Doesn't broadcast version level of server software
