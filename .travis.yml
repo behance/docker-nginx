@@ -4,5 +4,11 @@ services:
   - docker
 
 script:
-- docker build .
-- docker build -f Dockerfile-alpine .
+- docker-compose build ubuntu
+- docker-compose build alpine
+- docker-compose up -d
+- sleep 5
+- docker-compose ps
+- curl localhost:8080 | grep "Welcome to nginx!"
+- curl localhost:8081 | grep "Welcome to nginx!"
+- docker-compose kill
