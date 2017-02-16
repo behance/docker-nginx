@@ -41,7 +41,9 @@ COPY ./container/root /
 # NOTE: order of operations is important, new config had to already installed from repo (above)
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     # Make temp directory for .nginx runtime files \
-    mkdir /tmp/.nginx
+    mkdir /tmp/.nginx && \
+    # HACK: create an world-writeable named pipe to STDOUT to deal with /dev/stdout permissions changing at runtime
+    mkfifo -m 666 /tmp/stdout
 
 RUN goss -g /tests/nginx/base.goss.yaml validate && \
     /aufs_hack.sh
