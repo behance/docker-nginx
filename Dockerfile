@@ -1,10 +1,8 @@
 FROM behance/docker-base:1.6
 MAINTAINER Bryan Latten <latten@adobe.com>
 
-ARG CONTAINER_PORT=8080
-ARG CONTAINER_SSL
-
 ENV CONTAINER_ROLE=web \
+    CONTAINER_PORT=8080 \
     CONF_NGINX_SITE="/etc/nginx/sites-available/default" \
     CONF_NGINX_SERVER="/etc/nginx/nginx.conf" \
     NOT_ROOT_USER=www-data
@@ -41,9 +39,6 @@ RUN /bin/bash -e /security_updates.sh && \
 
 # Overlay the root filesystem from this repo
 COPY ./container/root /
-
-# Uncomment the ssl directives
-RUN /bin/bash -c 'if [[ $CONTAINER_SSL ]]; then sed -ig "s/^[ ]*#ssl/  ssl/" $CONF_NGINX_SITE; fi;'
 
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)

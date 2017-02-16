@@ -17,19 +17,12 @@ See parent(s) [docker-base](https://github.com/behance/docker-base) for addition
 ### Expectations
 
 Applications using this as a container parent must copy their html/app into the `/var/www/html` folder
-NOTE: Nginx is exposed and bound to an unprivileged port, `8080`, by default
+NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
 
 
 ### Security
 
 For Ubuntu-based variants, a convenience script is provided for security-only package updates. To run: `/bin/bash -e /security_updates.sh`
-
-### Dockerfile arguments
-Variable | Example | Description
---- | --- | ---
-`CONTAINER_PORT` | `CONTAINER_PORT=8080` | Allows the runtime to listen on a different port. For example, set it to 8443 would be typical for HTTPS.
-`CONTAINER_SSL` | `CONTAINER_SSL=` | Enable SSL directives in default configuration (Not working @alshamma)
-
 
 ### Environment Variables
 
@@ -49,7 +42,7 @@ Variable | Example | Description
 `SERVER_LOG_MINIMAL` | `SERVER_LOG_MINIMAL=1` | Minimize the logging format, appropriate for development environments
 `S6_KILL_FINISH_MAXTIME` | `S6_KILL_FINISH_MAXTIME=1000` | Wait time (in ms) for zombie reaping before sending a kill signal
 `S6_KILL_GRACETIME` | `S6_KILL_GRACETIME=500` | Wait time (in ms) for S6 finish scripts before sending kill signal
-`SERVER_ENABLE_SSL` | `SERVER_ENABLE_SSL=` | Enable SSL directives in default configuration (@alshamma: remove this before merge)
+`SERVER_ENABLE_SSL` | `SERVER_ENABLE_SSL=` | Enable SSL directives in default configuration
 
 
 ### Startup/Runtime Modification
@@ -58,16 +51,16 @@ To inject changes just before runtime, shell scripts (ending in .sh) may be plac
 `/etc/cont-init.d` folder. For example, the above environment variables are used to drive nginx configuration at runtime.
 As part of the process manager, these scripts are run in advance of the supervised processes. @see https://github.com/just-containers/s6-overlay#executing-initialization-andor-finalization-tasks
 
-### HTTPS support for local development
+### HTTPS/SSL support for local development
 
 Follow these steps to create an image and run a container that hosts a static website or a service using nginx.
 
 * On your development machine, download or generate an x509 certificate and key appropriate for use with apache or nginx. Install these with the names certificate.crt and certificate.key, respectively, in a local folder.
 * Add an entry to your /etc/hosts to map 127.0.0.1 to the server host name corresponding to your certificate.
-* Build an image using --build-args CONTAINER_PORT=8443 --build-args CONTAINER_SSL=true
+* Run the image using --env SERVER_ENABLE_SSL=true
 * Start a container using:
   * -v {folder-containing-certificate.crt/key}:/etc/nginx/certs:ro
-  * -p 443:8443 (or whatever ports you are using)
+  * -p 443:8080 (or whatever host port you are using)
 * Test
   * curl https://{your-server-hostname}, or,
   * curl -k https://localhost

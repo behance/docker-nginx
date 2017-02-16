@@ -75,9 +75,9 @@ then
   sed -i "s/client_body_buffer_size .*;/client_body_buffer_size ${SERVER_CLIENT_BODY_BUFFER_SIZE};/" $CONF_NGINX_SERVER
 fi
 
-# if [[ $SERVER_ENABLE_SSL ]]
-# then
-#   echo "[nginx] enabling ssl"
-#   sed -ig "s/^[ ]*#ssl/  ssl/" $CONF_NGINX_SITE
-# fi
+if [[ $SERVER_ENABLE_SSL ]]
+then
+  echo "[nginx] enabling ssl"
+  sed -ig "s/^[ ]*#ssl/  ssl/" $CONF_NGINX_SITE
+fi
 
