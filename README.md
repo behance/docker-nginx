@@ -7,11 +7,11 @@ Ubuntu used by default, Alpine builds also available tagged as `-alpine`
 
 Provides base OS, patches and stable nginx for quick and easy spinup.
 
-[S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation
+[S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation 
 
-[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing.
+[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing. 
 
-See parent(s) [docker-base](https://github.com/behance/docker-base) for additional configuration
+See parent(s) [docker-base](https://github.com/behance/docker-base) for additional configuration 
 
 
 ### Expectations
@@ -23,6 +23,7 @@ NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
 ### Security
 
 For Ubuntu-based variants, a convenience script is provided for security-only package updates. To run: `/bin/bash -e /security_updates.sh`
+
 
 ### Environment Variables
 
@@ -59,7 +60,8 @@ Follow these steps to create an image and run a container that hosts a static we
 * Add an entry to your /etc/hosts to map 127.0.0.1 to the server host name corresponding to your certificate.
 * Run the image using --env SERVER_ENABLE_SSL=true
 * Start a container using:
-  * -v {folder-containing-certificate.crt/key}:/etc/nginx/certs:ro
+  * -v {folder-containing-certificate.crt}:/etc/nginx/certs:ro
+  * -v {folder-containing-certificate.key}:/etc/nginx/certs:ro
   * -p 443:8080 (or whatever host port you are using)
 * Test
   * curl https://{your-server-hostname}, or,
