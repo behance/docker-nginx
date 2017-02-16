@@ -21,8 +21,6 @@ RUN /bin/bash -e /security_updates.sh && \
     apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends \
         nginx-light \
-    && \
-    apt-get install -yqq --no-install-recommends \
         ca-certificates \
     && \
     # Perform cleanup, ensure unnecessary packages are removed \

@@ -18,8 +18,6 @@ RUN adduser -D -S -H $NOT_ROOT_USER
 RUN apk update --no-cache && \
     apk add \
         nginx \
-    && \
-    apk add \
         ca-certificates \
     && \
     /bin/bash -e /clean.sh
