@@ -19,6 +19,9 @@ RUN apk update --no-cache && \
     apk add \
         nginx \
     && \
+    apk add \
+        ca-certificates \
+    && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
