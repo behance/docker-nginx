@@ -15,4 +15,4 @@ trap -x
   }
 }
 
-s6-setuidgid www-data nginx -g "daemon off;"
+nginx -g "daemon off;"
