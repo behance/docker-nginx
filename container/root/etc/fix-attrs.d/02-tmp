@@ -1,3 +1,0 @@
-/tmp/.nginx true www-data 0644 2700
-/tmp true www-data 0644 2700
-/var/log/nginx/error.log true www-data 0644 2700
