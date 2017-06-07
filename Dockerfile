@@ -1,4 +1,4 @@
-FROM behance/docker-base:1.6
+FROM behance/docker-base:2.0
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 ENV CONTAINER_ROLE=web \
