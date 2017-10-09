@@ -41,7 +41,15 @@ COPY ./container/root /
 # NOTE: order of operations is important, new config had to already installed from repo (above)
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     # Make temp directory for .nginx runtime files \
-    mkdir /tmp/.nginx
+    mkdir /tmp/.nginx && \
+    # Next three operations can be completely removed once this ticket is resolved:
+    # https://trac.nginx.org/nginx/ticket/1243
+    # Remove older WOFF mime-type
+    sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
+    # Add again with newer mime-type
+    sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
+    # Also add mime-type for WOFF2
+    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
 
 RUN goss -g /tests/nginx/base.goss.yaml validate && \
     /aufs_hack.sh
