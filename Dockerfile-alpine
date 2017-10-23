@@ -40,7 +40,7 @@ RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
     sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
 
-RUN goss -g /tests/nginx/base.goss.yaml validate && \
+RUN goss -g /tests/alpine/nginx.goss.yaml validate && \
     /aufs_hack.sh
 
 # NOTE: intentionally NOT using s6 init as the entrypoint
