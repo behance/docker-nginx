@@ -1,4 +1,4 @@
-FROM behance/docker-base:2.1-alpine
+FROM behance/docker-base:2.3-alpine
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
@@ -24,20 +24,20 @@ RUN apk update --no-cache && \
 # Overlay the root filesystem from this repo
 COPY ./container/root /
 
-# Set nginx to listen on defined port \
+# - Set nginx to listen on defined port
+# - Fix permissions to run unprivileged
+# - Make temp directory for .nginx runtime files
+# - Some operations can be completely removed once this ticket is resolved:
+# - https://trac.nginx.org/nginx/ticket/1243
+# - Remove older WOFF mime-type
+# - Add again with newer mime-type
+# - Also add mime-type for WOFF2
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
-    # Fix permissions to run unprivileged
     bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx" && \
-    # Make temp directory for .nginx runtime files \
     mkdir /tmp/.nginx && \
-    # Next three operations can be completely removed once this ticket is resolved:
-    # https://trac.nginx.org/nginx/ticket/1243
-    # Remove older WOFF mime-type
     sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
-    # Add again with newer mime-type
     sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
-    # Also add mime-type for WOFF2
     sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
 
 RUN goss -g /tests/nginx/base.goss.yaml validate && \
