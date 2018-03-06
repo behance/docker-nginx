@@ -20,20 +20,20 @@ RUN /bin/bash -e /security_updates.sh && \
 # Overlay the root filesystem from this repo
 COPY ./container/root /
 
-# Set nginx to listen on defined port
-# NOTE: order of operations is important, new config had to already installed from repo (above)
+# - Set nginx to listen on defined port
+# - NOTE: order of operations is important, new config had to already installed from repo (above)
+# - Make temp directory for .nginx runtime files
+# - Update nginx.conf user
+# - Some operations can be completely removed once this ticket is resolved:
+# - https://trac.nginx.org/nginx/ticket/1243
+# - Remove older WOFF mime-type        
+# - Add again with newer mime-type    
+# - Also add mime-type for WOFF2    
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
-    # Make temp directory for .nginx runtime files \
     mkdir /tmp/.nginx && \
-    # Update nginx.conf user
     sed -i "s/^user .*$/user ${NOT_ROOT_USER};/" ${CONF_NGINX_SERVER} && \
-    # Next three operations can be completely removed once this ticket is resolved:
-    # https://trac.nginx.org/nginx/ticket/1243
-    # Remove older WOFF mime-type
     sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
-    # Add again with newer mime-type
     sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
-    # Also add mime-type for WOFF2
     sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
 
 RUN goss -g /tests/centos/nginx.goss.yaml validate && \
