@@ -1,0 +1,9 @@
+gossfile:
+  /tests/common/nginx.goss.yaml: {}
+
+user:
+  www-data:
+    exists: true
+group:
+  www-data:
+    exists: true
