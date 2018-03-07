@@ -1,4 +1,4 @@
-FROM behance/docker-base:1.6
+FROM behance/docker-base:2.3
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 ENV CONTAINER_ROLE=web \
@@ -11,19 +11,20 @@ ENV CONTAINER_ROLE=web \
 EXPOSE ${CONTAINER_PORT}
 
 # - Update security packages, only, plus ca-certificates for https
+# - Update security packages, only
+# - Install pre-reqs
+# - Install latest nginx (development PPA is actually mainline development)
+# - Perform cleanup, ensure unnecessary packages are removed
 RUN /bin/bash -e /security_updates.sh && \
-    # Install pre-reqs \
     apt-get install --no-install-recommends -yqq \
         software-properties-common \
     && \
-    # Install latest nginx (development PPA is actually mainline development) \
     add-apt-repository ppa:nginx/development -y && \
     apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends \
         nginx-light \
         ca-certificates \
     && \
-    # Perform cleanup, ensure unnecessary packages are removed \
     apt-get remove --purge -yq \
         manpages \
         manpages-dev \
@@ -40,11 +41,19 @@ COPY ./container/root /
 
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)
+# - Make temp directory for .nginx runtime files
+# - Some operations can be completely removed once this ticket is resolved:
+# - https://trac.nginx.org/nginx/ticket/1243
+# - Remove older WOFF mime-type
+# - Add again with newer mime-type
+# - Also add mime-type for WOFF2
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
-    # Make temp directory for .nginx runtime files \
-    mkdir /tmp/.nginx
+    mkdir /tmp/.nginx && \
+    sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
+    sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
+    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
 
-RUN goss -g /tests/nginx/base.goss.yaml validate && \
+RUN goss -g /tests/ubuntu/nginx.goss.yaml validate && \
     /aufs_hack.sh
 
 # NOTE: intentionally NOT using s6 init as the entrypoint

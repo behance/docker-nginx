@@ -1,13 +1,6 @@
 gossfile:
   ../../goss.base.yaml: {}
 
-user:
-  www-data:
-    exists: true
-group:
-  www-data:
-    exists: true
-
 command:
   nginx -v:
     exit-status: 0

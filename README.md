@@ -2,8 +2,9 @@
 
 https://hub.docker.com/r/behance/docker-nginx/tags/
 
-Ubuntu used by default, Alpine builds also available tagged as `-alpine`
-
+Ubuntu used by default
+Alpine builds available tagged as `-alpine`
+Centos builds available tagged as `-centos`
 
 Provides base OS, patches and stable nginx for quick and easy spinup.
 
