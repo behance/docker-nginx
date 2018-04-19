@@ -20,8 +20,8 @@ RUN /bin/bash -e /security_updates.sh && \
     && \
     add-apt-repository ppa:nginx/development -y && \
     apt-get update -yqq && \
-    apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -yqq \
-        nginx-light \
+    apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -yqq --no-install-recommends \
+    nginx-light libnginx-mod-http-echo nginx-common libc6 libpcre3 libssl1.0.0 zlib1g \
     && \
     apt-get remove --purge -yq \
         manpages \
