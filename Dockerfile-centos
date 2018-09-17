@@ -1,4 +1,4 @@
-FROM behance/docker-base:2.3-centos
+FROM behance/docker-base:2.4-centos
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 ENV CONTAINER_ROLE=web \
@@ -26,9 +26,9 @@ COPY ./container/root /
 # - Update nginx.conf user
 # - Some operations can be completely removed once this ticket is resolved:
 # - https://trac.nginx.org/nginx/ticket/1243
-# - Remove older WOFF mime-type        
-# - Add again with newer mime-type    
-# - Also add mime-type for WOFF2    
+# - Remove older WOFF mime-type
+# - Add again with newer mime-type
+# - Also add mime-type for WOFF2
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     mkdir /tmp/.nginx && \
     sed -i "s/^user .*$/user ${NOT_ROOT_USER};/" ${CONF_NGINX_SERVER} && \
