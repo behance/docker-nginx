@@ -42,7 +42,7 @@ SERVER_CLIENT_HEADER_BUFFER_SIZE | SERVER_CLIENT_HEADER_BUFFER_SIZE=16k | [docs]
 SERVER_LARGE_CLIENT_HEADER_BUFFERS | SERVER_LARGE_CLIENT_HEADER_BUFFERS=8 16k | [docs](http://nginx.org/en/docs/http/ngx_http_core_module.html#large_client_header_buffers)
 SERVER_CLIENT_BODY_BUFFER_SIZE | SERVER_CLIENT_BODY_BUFFER_SIZE=128k | [docs](http://nginx.org/en/docs/http/ngx_http_core_module.html#client_body_buffer_size)
 SERVER_LOG_MINIMAL | SERVER_LOG_MINIMAL=1 | Minimize the logging format, appropriate for development environments
-S6_KILL_FINISH_MAXTIME | S6_KILL_FINISH_MAXTIME=1000 | The maximum time (in ms) a script in /etc/cont-finish.d could take before sending a KILL signal to it. Take into account that this parameter will be used per each script execution, it's not a max time for the whole set of scripts.
+S6_KILL_FINISH_MAXTIME | S6_KILL_FINISH_MAXTIME=55000 | The maximum time (in ms) a script in /etc/cont-finish.d could take before sending a KILL signal to it. Take into account that this parameter will be used per each script execution, it's not a max time for the whole set of scripts. This value has a max of 65535 on Alpine variants.
 S6_KILL_GRACETIME | S6_KILL_GRACETIME=500 | Wait time (in ms) for S6 finish scripts before sending kill signal
 
 
@@ -54,7 +54,7 @@ S6_KILL_GRACETIME | S6_KILL_GRACETIME=500 | Wait time (in ms) for S6 finish scri
 ### Shutdown Behavior
 
 Graceful shutdown is handled as part of the [existing](https://github.com/behance/docker-base#shutdown-behavior) S6 termination process, using a `/etc/cont-finish.d` script.
-Nginx will attempt to drain active workers, while rejecting new connections. The drain timeout is controlled by `S6_KILL_FINISH_MAXTIME`, which corresponds to the length of time the supervisor will wait for the script to run during shutdown.
+Nginx will attempt to drain active workers, while rejecting new connections. The drain timeout is controlled by `S6_KILL_FINISH_MAXTIME`, which corresponds to the length of time the supervisor will wait for the script to run during shutdown. This value defaults to 55s, which deliberately `less` than an downstream load balancers default max connection length (60s). Each upstream's timeout must be less than the downstream, for sanity and lack of timing precision.
 
 ### Long-running processes (workers + crons)
 
