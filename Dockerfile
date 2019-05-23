@@ -1,11 +1,14 @@
 FROM behance/docker-base:2.6-ubuntu-18.04
 MAINTAINER Bryan Latten <latten@adobe.com>
 
+# Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
+# Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
 ENV CONTAINER_ROLE=web \
     CONTAINER_PORT=8080 \
     CONF_NGINX_SITE="/etc/nginx/sites-available/default" \
     CONF_NGINX_SERVER="/etc/nginx/nginx.conf" \
-    NOT_ROOT_USER=www-data
+    NOT_ROOT_USER=www-data \
+    S6_KILL_FINISH_MAXTIME=55000
 
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}

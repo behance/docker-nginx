@@ -1,21 +1,17 @@
 #!/usr/bin/execlineb -P
 
-# @see https://github.com/just-containers/s6-overlay/issues/41#issuecomment-99366363
+# TERM broadcast is ignored in order to shut down gracefully,
+# Shutdown implemented in /etc/cont-finish.d
 
-# Nginx uses SIGQUIT to gracefully stop serving traffic.
-trap -x
+trap
 {
   term
   {
-    foreground
-    {
-      nginx -s quit
-    }
-    echo [sigterm-nginx] graceful shutdown complete
+    echo [run nginx] TERM received
   }
   hup
   {
-    echo [signhup-nginx] received, ignored
+    echo [run nginx] HUP received
   }
 }
 
