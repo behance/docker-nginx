@@ -1,0 +1,12 @@
+#!/bin/bash
+
+current_user=$(whoami)
+set_user=${1}
+if [ "$current_user" == "$set_user" ]; then
+    echo "deprivilege noop (s6-setuidgid): current user = set user: $set_user."
+    shift
+    exec $@
+else    
+    echo "***Warning*** Starting image as $current_user and deprivileging service to run under $set_user, future versions of this image will use $NOT_ROOT_USER as the default user set via https://docs.docker.com/engine/reference/builder/#user."
+    exec /scripts/s6-setuidgid $@
+fi    
