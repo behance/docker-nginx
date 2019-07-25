@@ -18,6 +18,7 @@ See parent(s) [docker-base](https://github.com/behance/docker-base) for addition
 ### Expectations
 
 - Applications must copy their html/app into the `/var/www/html` folder
+- Any new script/file that needs to be added must be given proper permissions/ownership to the non root user through `container/root/scripts/set_permissions.sh`. This is to ensure that the image can be run under a non root user.
 -   NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
 
 
