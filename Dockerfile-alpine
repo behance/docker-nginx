@@ -33,15 +33,15 @@ COPY ./container/root /
 # - Remove older WOFF mime-type
 # - Add again with newer mime-type
 # - Also add mime-type for WOFF2
+# Set permissions to allow image to be run under a non root user
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx" && \
     mkdir /tmp/.nginx && \
     sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
     sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
-    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
-
-RUN /bin/bash -e /scripts/set_permissions.sh
+    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types && \
+    /bin/bash -e /scripts/set_permissions.sh
 
 RUN goss -g /tests/alpine/nginx.goss.yaml validate && \
     /aufs_hack.sh
