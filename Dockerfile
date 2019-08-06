@@ -8,7 +8,8 @@ ENV CONTAINER_ROLE=web \
     CONF_NGINX_SITE="/etc/nginx/sites-available/default" \
     CONF_NGINX_SERVER="/etc/nginx/nginx.conf" \
     NOT_ROOT_USER=www-data \
-    S6_KILL_FINISH_MAXTIME=55000
+    S6_KILL_FINISH_MAXTIME=55000 \
+    S6_READ_ONLY_ROOT=1
 
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}
@@ -38,7 +39,7 @@ RUN /bin/bash -e /security_updates.sh && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
-COPY ./container/root /
+COPY --chown=${NOT_ROOT_USER} ./container/root /
 
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)
