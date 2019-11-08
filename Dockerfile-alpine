@@ -23,7 +23,7 @@ RUN apk update --no-cache && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
-COPY --chown=${NOT_ROOT_USER} ./container/root /
+COPY --chown=www-data ./container/root /
 
 # - Set nginx to listen on defined port
 # - Make temp directory for .nginx runtime files

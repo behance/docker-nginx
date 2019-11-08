@@ -38,7 +38,7 @@ RUN /bin/bash -e /security_updates.sh && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
-COPY --chown=${NOT_ROOT_USER} ./container/root /
+COPY --chown=www-data ./container/root /
 
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)
