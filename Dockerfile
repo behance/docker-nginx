@@ -38,7 +38,7 @@ RUN /bin/bash -e /security_updates.sh && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
-COPY ./container/root /
+COPY --chown=www-data ./container/root /
 
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)
@@ -48,11 +48,13 @@ COPY ./container/root /
 # - Remove older WOFF mime-type
 # - Add again with newer mime-type
 # - Also add mime-type for WOFF2
+# Set permissions to allow image to be run under a non root user
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     mkdir /tmp/.nginx && \
     sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
     sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
-    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
+    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types && \
+    /bin/bash -e /scripts/set_permissions.sh
 
 RUN goss -g /tests/ubuntu/nginx.goss.yaml validate && \
     /aufs_hack.sh

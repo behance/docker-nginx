@@ -23,23 +23,24 @@ RUN apk update --no-cache && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
-COPY ./container/root /
+COPY --chown=www-data ./container/root /
 
 # - Set nginx to listen on defined port
-# - Fix permissions to run unprivileged
 # - Make temp directory for .nginx runtime files
 # - Some operations can be completely removed once this ticket is resolved:
 # - https://trac.nginx.org/nginx/ticket/1243
 # - Remove older WOFF mime-type
 # - Add again with newer mime-type
 # - Also add mime-type for WOFF2
+# - Fix permissions for nginx folders and run set_permissions.sh to allow running image under a non root user
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx" && \
     mkdir /tmp/.nginx && \
     sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
     sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
-    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types
+    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types && \
+    /bin/bash -e /scripts/set_permissions.sh
 
 RUN goss -g /tests/alpine/nginx.goss.yaml validate && \
     /aufs_hack.sh
