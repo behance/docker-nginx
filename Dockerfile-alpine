@@ -26,14 +26,13 @@ RUN apk update --no-cache && \
 COPY --chown=${NOT_ROOT_USER} ./container/root /
 
 # - Set nginx to listen on defined port
-# - Fix permissions to run unprivileged
 # - Make temp directory for .nginx runtime files
 # - Some operations can be completely removed once this ticket is resolved:
 # - https://trac.nginx.org/nginx/ticket/1243
 # - Remove older WOFF mime-type
 # - Add again with newer mime-type
 # - Also add mime-type for WOFF2
-# Set permissions to allow image to be run under a non root user
+# - Fix permissions for nginx folders and run set_permissions.sh to allow running image under a non root user
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     bash -c "chown www-data:www-data /var/{lib,log}/nginx -Rh" && \
     bash -c "chmod 0755 -R /var/{lib,log}/nginx" && \
