@@ -1,16 +1,17 @@
 sudo: required
 
+env:
+  - DOCKERFILE=Dockerfile
+  - DOCKERFILE=Dockerfile-alpine
+  - DOCKERFILE=Dockerfile-centos
+
 services:
   - docker
 
 script:
-- docker-compose build ubuntu
-- docker-compose build alpine
-- docker-compose build centos
-- docker-compose up -d
+- docker build -t nginxtest -f ${DOCKERFILE} .
+- docker run -p 8080:8080 -d nginxtest
+- docker run -p 8081:8080 -d --env-file ./.test.env nginxtest
 - sleep 5
-- docker-compose ps
 - curl localhost:8080 | grep "Welcome to nginx!"
 - curl localhost:8081 | grep "Welcome to nginx!"
-- curl localhost:8082 | grep "Welcome to nginx!"
-- docker-compose kill
