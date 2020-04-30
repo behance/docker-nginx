@@ -1,4 +1,4 @@
-FROM behance/docker-base:2.6-ubuntu-18.04
+FROM behance/docker-base:2.6-ubuntu-20.04
 MAINTAINER Bryan Latten <latten@adobe.com>
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
@@ -21,7 +21,7 @@ RUN /bin/bash -e /security_updates.sh && \
     apt-get install --no-install-recommends -yqq \
         software-properties-common \
     && \
-    add-apt-repository ppa:nginx/development -y && \
+    add-apt-repository ppa:ondrej/nginx -y && \
     apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends \
         nginx-light \
