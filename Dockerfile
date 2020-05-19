@@ -43,8 +43,6 @@ COPY --chown=www-data ./container/root /
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)
 # - Make temp directory for .nginx runtime files
-# - Some operations can be completely removed once this ticket is resolved:
-# - https://trac.nginx.org/nginx/ticket/1243
 # - Remove older WOFF mime-type
 # - Add again with newer mime-type
 # - Also add mime-type for WOFF2

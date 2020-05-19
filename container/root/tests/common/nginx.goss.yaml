@@ -45,10 +45,14 @@ file:
       - '/#{0}uwsgi_temp_path\s*/tmp/.nginx/uwsgi_temp;/'
       - '/#{0}include\s*\/etc\/nginx\/sites-available\/\*;/'
       - '    include /etc/nginx/http_headers.conf;'
-
-file:
   /etc/nginx/http_headers.conf:
     exists: true
     contains:
       - '/#{0}add_header\s+X-XSS-Protection\s+"1;\s*mode=block"\s+always;/'
       - '/#{0}add_header\s+X-Content-Type-Options\s+"nosniff"\s+always;/'
+  /etc/nginx/mime.types:
+    exists: true
+    contains:
+      - '/#{0}font\/woff\s*woff;/'
+      - '/#{0}font\/woff2\s*woff2;/'
+      - '!/application\/font-woff/'
