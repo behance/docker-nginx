@@ -74,3 +74,12 @@ then
   echo "[nginx] setting client_body_buffer_size to ${SERVER_CLIENT_BODY_BUFFER_SIZE}"
   sed -i "s/client_body_buffer_size .*;/client_body_buffer_size ${SERVER_CLIENT_BODY_BUFFER_SIZE};/" $CONF_NGINX_SERVER
 fi
+
+if [[ $SERVER_ENABLE_HTTPS ]]
+then
+  echo "[nginx] enabling HTTPS"
+  # Uncomment all ssl* directives in site configuration
+  sed -i "s/^[ ]*#ssl/  ssl/" $CONF_NGINX_SITE
+  # Add SSL to listen directive
+  sed -i "s/^[ ]*listen ${CONTAINER_PORT}/  listen ${CONTAINER_PORT} ssl/" $CONF_NGINX_SITE
+fi

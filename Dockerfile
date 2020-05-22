@@ -13,7 +13,7 @@ ENV CONTAINER_ROLE=web \
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}
 
-# - Update security packages, only
+# - Update security packages, plus ca-certificates required for https
 # - Install pre-reqs
 # - Install latest nginx (development PPA is actually mainline development)
 # - Perform cleanup, ensure unnecessary packages are removed
@@ -25,6 +25,7 @@ RUN /bin/bash -e /security_updates.sh && \
     apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends \
         nginx-light \
+        ca-certificates \
     && \
     apt-get remove --purge -yq \
         manpages \
