@@ -16,7 +16,7 @@ EXPOSE ${CONTAINER_PORT}
 # - Update security packages, only
 RUN /bin/bash -e /security_updates.sh && \
     yum -y -q install epel-release && \
-    yum -y -q install nginx && \
+    yum -y -q install nginx ca-certificates && \
     yum -y -q remove epel-release && \
     /bin/bash -e /clean.sh
 

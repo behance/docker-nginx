@@ -10,8 +10,14 @@ services:
 
 script:
 - docker build -t nginxtest -f ${DOCKERFILE} .
+- mkdir certs
+- openssl genrsa -out ./certs/ca.key 2048
+- openssl req -new -key ./certs/ca.key -out ./certs/ca.csr -subj '/CN=localhost'
+- openssl x509 -req -days 365 -in ./certs/ca.csr -signkey ./certs/ca.key -out ./certs/ca.crt
 - docker run -p 8080:8080 -d nginxtest
 - docker run -p 8081:8080 -d --env-file ./.test.env nginxtest
+- docker run -p 8082:8080 -d -e SERVER_ENABLE_HTTPS=true -v $(pwd)/certs:/etc/nginx/certs:ro nginxtest
 - sleep 5
 - curl localhost:8080 | grep "Welcome to nginx!"
 - curl localhost:8081 | grep "Welcome to nginx!"
+- curl -k https://localhost:8082 | grep "Welcome to nginx!"

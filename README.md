@@ -2,17 +2,18 @@
 
 https://hub.docker.com/r/behance/docker-nginx/tags/
 
-Ubuntu used by default
-Alpine builds available tagged as `-alpine`
-Centos builds available tagged as `-centos`
-
 Provides base OS, patches and stable nginx for quick and easy spinup.
 
-[S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation  
+- Ubuntu used by default
+- Alpine builds available tagged as `-alpine`
+- Centos builds available tagged as `-centos`
 
-[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing.  
 
-See parent(s) [docker-base](https://github.com/behance/docker-base) for additional configuration  
+[S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation
+
+[Goss](https://github.com/aelsabbahy/goss) is used for build-time testing.
+
+See parent(s) [docker-base](https://github.com/behance/docker-base) for additional configuration
 
 
 ### Expectations
@@ -22,9 +23,43 @@ See parent(s) [docker-base](https://github.com/behance/docker-base) for addition
 -   NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
 
 
-### Security
+### Container Security
 
 See parent [configuration](https://github.com/behance/docker-base#security)
+
+
+### HTTPS usage
+
+To enable this container to serve HTTPS over its primary exposed port:
+- `SERVER_ENABLE_HTTPS` environment variable must be `true`
+- Certificates must be present in `/etc/nginx/certs` under the following names:
+    - `ca.crt`
+    - `ca.key`
+- Additionally, they must be marked read-only (0600)
+
+#### Local development usage
+
+To generate a self-signed certificate (won't work in most browsers):
+```
+openssl genrsa -out ca.key 2048
+openssl req -new -key ca.key -out ca.csr -subj '/CN=localhost'
+openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt
+```
+
+Run the image in background, bind external port (443), flag HTTPS enabled, mount certificate:
+```
+docker run \
+  -d
+  -p 443:8080 \
+  -e SERVER_ENABLE_HTTPS=true \
+  -v {directory-containing-ca.crt-and-ca.key}:/etc/nginx/certs:ro
+  behance/docker-nginx
+```
+
+Test
+```
+curl -k -vvv https://{your-docker-machine-ip}
+```
 
 
 ### Environment Variables
@@ -36,6 +71,7 @@ SERVER_INDEX | SERVER_INDEX index.html index.html index.php | Changes the defaul
 SERVER_APP_NAME | SERVER_APP_NAME='view' | Gets appended to the default logging format
 SERVER_GZIP_OPTIONS | SERVER_GZIP_OPTIONS=1 | Allows default set of static content to be served gzipped
 SERVER_SENDFILE | SERVER_SENDFILE=off | Allows runtime to specify value of nginx's `sendfile` (default, on)
+SERVER_ENABLE_HTTPS | SERVER_ENABLE_HTTPS=true | Enable encrypted transmission using certificates
 SERVER_KEEPALIVE | SERVER_KEEPALIVE=30 | Define HTTP 1.1's keepalive timeout
 SERVER_WORKER_PROCESSES | SERVER_WORKER_PROCESSES=4 | Set to the number of cores in the machine, or the number of cores allocated to container
 SERVER_WORKER_CONNECTIONS | SERVER_WORKER_CONNECTIONS=2048 | Sets up the number of connections for worker processes
