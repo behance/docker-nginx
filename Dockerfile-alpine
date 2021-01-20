@@ -1,5 +1,4 @@
-FROM behance/docker-base:2.7-alpine
-MAINTAINER Bryan Latten <latten@adobe.com>
+FROM behance/docker-base:3.0-alpine
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
