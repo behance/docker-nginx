@@ -105,3 +105,16 @@ container's use is in configuration and process. The `./container/root` repo dir
 to the folders in there will be present in the final image.
 
 Nginx is currently set up as an S6 service in `/etc/services-available/nginx`, during default environment conditions, it will symlink itself to be supervised under `/etc/services.d/nginx`. When running under worker entrypoint (`worker.sh`), it will not be S6's `service.d` folder to be supervised.
+
+
+### Release Management
+
+Github actions provide the machinery for producing tags distributed through Docker Hub. Once a tested and approved PR is merged, simply cutting a new semantically-versioned tag will generate the following matrix of tagged builds:
+- `[major].[minor].[patch](?-variant)`
+- `[major].[minor](?-variant)`
+- `[major](?-variant)`
+Platform support is available for architectures:
+- `linux/arm64`
+- `linux/amd64`
+
+To add new variant based on a new Dockerfile, add an entry to the `matrix.props` with its file and variant suffix.
