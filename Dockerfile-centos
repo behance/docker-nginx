@@ -1,4 +1,4 @@
-FROM behance/docker-base:3.0-centos-7
+FROM behance/docker-base:4.0-centos-7
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
