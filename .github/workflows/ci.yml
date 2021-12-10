@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        props:
+        - Dockerfile: Dockerfile
+        - Dockerfile: Dockerfile-alpine
+        - Dockerfile: Dockerfile-centos
+    env:
+      TEST_MATCH: Welcome to nginx!
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        # Build and execute in multiple configurations: vanilla, with env overrides, with TLS enabled
+        name: test
+        run: |
+          docker build -t nginxtest -f ${{ matrix.props.Dockerfile }} .
+          mkdir certs
+          openssl genrsa -out ./certs/ca.key 2048
+          openssl req -new -key ./certs/ca.key -out ./certs/ca.csr -subj '/CN=localhost'
+          openssl x509 -req -days 365 -in ./certs/ca.csr -signkey ./certs/ca.key -out ./certs/ca.crt
+          docker run -p 8080:8080 -d nginxtest
+          docker run -p 8081:8080 -d --env-file ./.test.env nginxtest
+          docker run -p 8082:8080 -d -e SERVER_ENABLE_HTTPS=true -v $(pwd)/certs:/etc/nginx/certs:ro nginxtest
+          sleep 5
+          curl localhost:8080 | grep "${{ TEST_MATCH }}"
+          curl localhost:8081 | grep "${{ TEST_MATCH }}"
+          curl -k https://localhost:8082 | grep "${{ TEST_MATCH }}"
