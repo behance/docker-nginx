@@ -1,14 +1,12 @@
-name: main
+name: publish
 
 on:
   push:
     tags:
     - '*'
-  pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     env:
       IMAGE_BASE: behance/docker-nginx

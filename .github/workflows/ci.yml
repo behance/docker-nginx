@@ -13,6 +13,9 @@ jobs:
         - Dockerfile: Dockerfile
         - Dockerfile: Dockerfile-alpine
         - Dockerfile: Dockerfile-centos
+        platform:
+        - linux/amd64
+        # - linux/arm64
     env:
       TEST_MATCH: Welcome to nginx!
     steps:
@@ -26,18 +29,40 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       -
+        name: Print
+        run: echo ${{ matrix.props.Dockerfile }}
+      -
         # Build and execute in multiple configurations: vanilla, with env overrides, with TLS enabled
         name: test
         run: |
-          docker build -t nginxtest -f ${{ matrix.props.Dockerfile }} .
-          mkdir certs
+          # Run docker registry locally to host multi-platform builds
+          CONTAINER_REGISTRY=$(docker run --rm -p 5000 -d registry:2)
+          REGISTRY_PORT=$(docker inspect --format '{{ (index (index .NetworkSettings.Ports "5000/tcp") 0).HostPort }}' $CONTAINER_REGISTRY)
+          REGISTRY_PATH="localhost:${REGISTRY_PORT}"
+
+          TAG_NAME="${{ matrix.props.Dockerfile }}-nginx"
+          TAG_NAME=$(echo $TAG_NAME | tr '[:upper:]' '[:lower:]')
+          TAG_NAME="${REGISTRY_PATH}/${TAG_NAME}"
+
+          docker buildx build --platform ${{ matrix.platform }} -t $TAG_NAME -f ${{ matrix.props.Dockerfile }} --push .
+          mkdir -p certs
           openssl genrsa -out ./certs/ca.key 2048
           openssl req -new -key ./certs/ca.key -out ./certs/ca.csr -subj '/CN=localhost'
           openssl x509 -req -days 365 -in ./certs/ca.csr -signkey ./certs/ca.key -out ./certs/ca.crt
-          docker run -p 8080:8080 -d nginxtest
-          docker run -p 8081:8080 -d --env-file ./.test.env nginxtest
-          docker run -p 8082:8080 -d -e SERVER_ENABLE_HTTPS=true -v $(pwd)/certs:/etc/nginx/certs:ro nginxtest
+          CONTAINER_VANILLA=$(docker run --expose 8080 -d $TAG_NAME)
+          CONTAINER_ENV_FILE=$(docker run --expose 8080 -d --env-file ./.test.env $TAG_NAME)
+          CONTAINER_HTTPS=$(docker run --expose 8080 -d -e SERVER_ENABLE_HTTPS=true -v $(pwd)/certs:/etc/nginx/certs:ro $TAG_NAME)
+
+          VANILLA_PORT=$(docker inspect --format '{{ (index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort }}' $CONTAINER_VANILLA)
+          ENV_FILE_PORT=$(docker inspect --format '{{ (index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort }}' $CONTAINER_ENV_FILE)
+          HTTPS_PORT=$(docker inspect --format '{{ (index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort }}' $CONTAINER_HTTPS)
+
           sleep 5
-          curl localhost:8080 | grep "${{ TEST_MATCH }}"
-          curl localhost:8081 | grep "${{ TEST_MATCH }}"
-          curl -k https://localhost:8082 | grep "${{ TEST_MATCH }}"
+          curl localhost:${VANILLA_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl localhost:${ENV_FILE_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl -k https://localhost:${HTTPS_PORT} | grep "${{ env.TEST_MATCH }}"
+
+          docker kill $CONTAINER_VANILLA
+          docker kill $CONTAINER_ENV_FILE
+          docker kill $CONTAINER_HTTPS
+          docker kill CONTAINER_REGISTRY
