@@ -29,22 +29,21 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       -
-        name: Print
-        run: echo ${{ matrix.props.Dockerfile }}
-      -
         # Build and execute in multiple configurations: vanilla, with env overrides, with TLS enabled
         name: test
         run: |
           # Run docker registry locally to host multi-platform builds
+          TARGET_PLATFORM=${{ matrix.platform }}
+          TARGET_DOCKERFILE=${{ matrix.props.Dockerfile }}
           CONTAINER_REGISTRY=$(docker run --rm -p 5000 -d registry:2)
           REGISTRY_PORT=$(docker inspect --format '{{ (index (index .NetworkSettings.Ports "5000/tcp") 0).HostPort }}' $CONTAINER_REGISTRY)
-          REGISTRY_PATH="localhost:${REGISTRY_PORT}"
+          REGISTRY_PATH="host.docker.internal:${REGISTRY_PORT}"
 
-          TAG_NAME="${{ matrix.props.Dockerfile }}-nginx"
+          TAG_NAME="${TARGET_DOCKERFILE}-nginx"
           TAG_NAME=$(echo $TAG_NAME | tr '[:upper:]' '[:lower:]')
           TAG_NAME="${REGISTRY_PATH}/${TAG_NAME}"
 
-          docker buildx build --platform ${{ matrix.platform }} -t $TAG_NAME -f ${{ matrix.props.Dockerfile }} --push .
+          docker buildx build --platform $TARGET_PLATFORM -t $TAG_NAME -f $TARGET_DOCKERFILE --push .
           mkdir -p certs
           openssl genrsa -out ./certs/ca.key 2048
           openssl req -new -key ./certs/ca.key -out ./certs/ca.csr -subj '/CN=localhost'
