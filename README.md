@@ -117,4 +117,20 @@ Platform support is available for architectures:
 - `linux/arm64`
 - `linux/amd64`
 
-To add new variant based on a new Dockerfile, add an entry to the `matrix.props` with its file and variant suffix.
+To add new variant based on a new Dockerfile, add an entry to `matrix.props` within `./github/workflows` YAML files.
+
+### Github Actions: Simulation
+
+docker-nginx uses Github Actions for CI/CD. Simulated workflows can be achieved locally with `act`. All commands must be executes from repository root.
+
+Pre-reqs: tested on Mac
+1. [Docker Desktop](https://www.docker.com/products/docker-desktop)
+1. [act](https://github.com/nektos/act)
+
+Pull request simulation: executes successfully
+- `act pull_request`
+
+Publish simulation: executes, but fails (intentionally) without credentials
+- `act`
+
+
