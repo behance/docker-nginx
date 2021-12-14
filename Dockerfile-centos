@@ -12,11 +12,18 @@ ENV CONTAINER_ROLE=web \
 # Using a non-privileged port to prevent having to use setcap internally
 EXPOSE ${CONTAINER_PORT}
 
-# - Update security packages, only
+# - Update security packages
+# - Install new stable version of nginx
 RUN /bin/bash -e /security_updates.sh && \
-    yum -y -q install epel-release && \
+    mkdir -p /etc/yum.repos.d && \
+    echo $'[nginx-stable] \n\
+name=nginx stable repo \n\
+baseurl=http://nginx.org/packages/centos/$releasever/$basearch/ \n\
+gpgcheck=1 \n\
+enabled=1 \n\
+name=nginx stable repo \n\
+gpgkey=https://nginx.org/keys/nginx_signing.key' > /etc/yum.repos.d/nginx.repo && \
     yum -y -q install nginx ca-certificates && \
-    yum -y -q remove epel-release && \
     /bin/bash -e /clean.sh
 
 # Overlay the root filesystem from this repo
@@ -34,5 +41,6 @@ RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     sed -i "s/^user .*$/user ${NOT_ROOT_USER};/" ${CONF_NGINX_SERVER} && \
     /bin/bash -e /scripts/set_permissions.sh
 
+RUN yum update -y -q nginx
 RUN goss -g /tests/centos/nginx.goss.yaml validate && \
     /aufs_hack.sh
