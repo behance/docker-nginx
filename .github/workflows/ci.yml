@@ -23,6 +23,23 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Detect host configuration
+        description: Docker host configuration changes the networking target for integration testing
+        run: |
+          v=$(mount | grep "/run/docker.sock")
+          TARGET_HOST=
+
+          if [ -n "$v" ]; then
+            echo "Injected docker socket detected"
+            TARGET_HOST="host.docker.internal"
+          elif [ -S /var/run/docker.sock ]; then
+            TARGET_HOST="localhost"
+          else
+            echo "No Docker socket detected, fail"
+            exit 1
+          fi
+          echo "TARGET_HOST=${TARGET_HOST}" >> $GITHUB_ENV
+      -
         # Build and execute in multiple configurations: vanilla, with env overrides, with TLS enabled
         name: Build and test
         run: |
@@ -69,10 +86,13 @@ jobs:
           # Wait for containers to boot (in background)
           sleep 5
 
+          TARGET_HOST=${{ env.TARGET_HOST }}
+          echo "HOSTING ${TARGET_HOST}"
+
           # Check for nginx test page response
-          curl host.docker.internal:${VANILLA_PORT} | grep "${{ env.TEST_MATCH }}"
-          curl host.docker.internal:${ENV_FILE_PORT} | grep "${{ env.TEST_MATCH }}"
-          curl -k https://host.docker.internal:${HTTPS_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl ${TARGET_HOST}:${VANILLA_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl ${TARGET_HOST}:${ENV_FILE_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl -k https://${TARGET_HOST}:${HTTPS_PORT} | grep "${{ env.TEST_MATCH }}"
 
           # Cleanup
           docker kill $CONTAINER_VANILLA
