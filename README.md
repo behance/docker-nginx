@@ -127,7 +127,7 @@ Pre-reqs: tested on Mac
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop)
 1. [act](https://github.com/nektos/act)
 
-Pull request simulation: executes successfully
+Pull request simulation: executes successfully, but only on ARM devices (ex. Apple M1). ARM emulation through QEMU on X64 machines does not implement the full kernel functionality required by nginx at this time.
 - `act pull_request`
 
 Publish simulation: executes, but fails (intentionally) without credentials
