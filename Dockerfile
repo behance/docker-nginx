@@ -1,4 +1,4 @@
-FROM behance/docker-base:3.0-ubuntu-20.04
+FROM behance/docker-base:4.0-ubuntu-20.04
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
@@ -43,15 +43,11 @@ COPY --chown=www-data ./container/root /
 # Set nginx to listen on defined port
 # NOTE: order of operations is important, new config had to already installed from repo (above)
 # - Make temp directory for .nginx runtime files
-# - Remove older WOFF mime-type
-# - Add again with newer mime-type
-# - Also add mime-type for WOFF2
+# - Fix woff mime type support
 # Set permissions to allow image to be run under a non root user
 RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     mkdir /tmp/.nginx && \
-    sed -i "/application\/font-woff/d" /etc/nginx/mime.types && \
-    sed -i "s/}/\n    font\/woff                             woff;&/" /etc/nginx/mime.types && \
-    sed -i "s/}/\n    font\/woff2                            woff2;\n&/g" /etc/nginx/mime.types && \
+    /bin/bash -e /scripts/fix_woff_support.sh && \
     /bin/bash -e /scripts/set_permissions.sh
 
 RUN goss -g /tests/ubuntu/nginx.goss.yaml validate && \

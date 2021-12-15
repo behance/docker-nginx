@@ -9,3 +9,6 @@
 # SASS
 .sass-cache
 *.css.map
+
+# Certificates
+certs/

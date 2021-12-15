@@ -8,6 +8,10 @@ env:
 services:
   - docker
 
+arch:
+  - amd64
+  - arm64
+
 script:
 - docker build -t nginxtest -f ${DOCKERFILE} .
 - mkdir certs

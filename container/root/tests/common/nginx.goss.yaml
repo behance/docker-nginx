@@ -53,6 +53,7 @@ file:
   /etc/nginx/mime.types:
     exists: true
     contains:
+      - '/#{0}text\/html/' # assert that file has basic content
       - '/#{0}font\/woff\s*woff;/'
       - '/#{0}font\/woff2\s*woff2;/'
       - '!/application\/font-woff/'
