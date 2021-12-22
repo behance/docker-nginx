@@ -1,4 +1,4 @@
-FROM behance/docker-base:4.0-centos-7
+FROM behance/docker-base:4.0-centos-7 as output
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
@@ -42,5 +42,9 @@ RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     /bin/bash -e /scripts/set_permissions.sh
 
 RUN yum update -y -q nginx
+
+FROM output as testenvironment
 RUN goss -g /tests/centos/nginx.goss.yaml validate && \
     /aufs_hack.sh
+
+FROM output
