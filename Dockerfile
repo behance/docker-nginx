@@ -1,4 +1,4 @@
-FROM behance/docker-base:4.0-ubuntu-20.04
+FROM behance/docker-base:4.0-ubuntu-20.04 as output
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
@@ -50,5 +50,7 @@ RUN sed -i "s/listen [0-9]*;/listen ${CONTAINER_PORT};/" $CONF_NGINX_SITE && \
     /bin/bash -e /scripts/fix_woff_support.sh && \
     /bin/bash -e /scripts/set_permissions.sh
 
-RUN goss -g /tests/ubuntu/nginx.goss.yaml validate && \
-    /aufs_hack.sh
+FROM output as testenvironment
+RUN goss -g /tests/ubuntu/nginx.goss.yaml validate
+
+FROM output

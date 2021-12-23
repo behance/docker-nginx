@@ -18,6 +18,7 @@ jobs:
         - linux/arm64
     env:
       TEST_MATCH: Welcome to nginx!
+      BASE_CONTAINER: docker-nginx
     steps:
       -
         name: Checkout
@@ -25,19 +26,14 @@ jobs:
       -
         name: Detect host configuration
         run: |
-          # NOTE: Docker host configuration determines the networking target for integration testing
-          v=$(mount | grep "/run/docker.sock")
           TARGET_HOST=
-
-          if [ -n "$v" ]; then
-            echo "Injected docker socket detected"
+          if [[ -n "$ACT" ]]; then
+            echo "Local execution detected"
             TARGET_HOST="host.docker.internal"
-          elif [ -S /var/run/docker.sock ]; then
-            TARGET_HOST="localhost"
           else
-            echo "No Docker socket detected, fail"
-            exit 1
-          fi
+            TARGET_HOST="localhost"
+          fi;
+
           echo "TARGET_HOST=${TARGET_HOST}" >> $GITHUB_ENV
       -
         # Build and execute in multiple configurations: vanilla, with env overrides, with TLS enabled
@@ -51,7 +47,7 @@ jobs:
           TARGET_DOCKERFILE=${{ matrix.props.Dockerfile }}
 
           # Since containers may or may not be against the same docker engine, create a matrix-unique tag name for outputs
-          TAG_NAME="docker-nginx-${TARGET_DOCKERFILE}-${TARGET_PLATFORM}"
+          TAG_NAME="${{ env.BASE_CONTAINER }}-${TARGET_DOCKERFILE}-${TARGET_PLATFORM}"
           # Formats as lowercase
           TAG_NAME=$(echo $TAG_NAME | tr '[:upper:]' '[:lower:]')
           # Removes slashes
@@ -90,9 +86,9 @@ jobs:
           echo "HOSTING ${TARGET_HOST}"
 
           # Check for nginx test page response
-          curl ${TARGET_HOST}:${VANILLA_PORT} | grep "${{ env.TEST_MATCH }}"
-          curl ${TARGET_HOST}:${ENV_FILE_PORT} | grep "${{ env.TEST_MATCH }}"
-          curl -k https://${TARGET_HOST}:${HTTPS_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl -v ${TARGET_HOST}:${VANILLA_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl -v ${TARGET_HOST}:${ENV_FILE_PORT} | grep "${{ env.TEST_MATCH }}"
+          curl -kv https://${TARGET_HOST}:${HTTPS_PORT} | grep "${{ env.TEST_MATCH }}"
 
           # Cleanup
           docker kill $CONTAINER_VANILLA
