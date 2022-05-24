@@ -13,6 +13,7 @@ jobs:
         - Dockerfile: Dockerfile
         - Dockerfile: Dockerfile-alpine
         - Dockerfile: Dockerfile-centos
+        - Dockerfile: Dockerfile-njs
         platform:
         - linux/amd64
         - linux/arm64

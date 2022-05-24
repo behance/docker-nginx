@@ -20,6 +20,8 @@ jobs:
           suffix: alpine
         - Dockerfile: Dockerfile-centos
           suffix: centos
+        - Dockerfile: Dockerfile-njs
+          suffix: njs
     steps:
       -
         name: Checkout

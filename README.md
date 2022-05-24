@@ -7,6 +7,7 @@ Provides base OS, patches and stable nginx for quick and easy spinup.
 - Ubuntu used by default
 - Alpine builds available tagged as `-alpine`
 - Centos builds available tagged as `-centos`
+- Ubuntu with ngx_http_js_module tagged as `-njs`
 
 
 [S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation
