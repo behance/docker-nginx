@@ -2,15 +2,18 @@ sudo: required
 
 env:
   - DOCKERFILE=Dockerfile
-  - DOCKERFILE=Dockerfile-alpine
-  - DOCKERFILE=Dockerfile-centos
+  # - DOCKERFILE=Dockerfile-alpine
+  # - DOCKERFILE=Dockerfile-centos
 
 services:
   - docker
 
+os: linux
+dist: focal
+
 arch:
   - amd64
-  - arm64
+  - arm64-graviton2
 
 script:
 - docker build -t nginxtest -f ${DOCKERFILE} .
