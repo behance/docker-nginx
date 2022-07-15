@@ -4,9 +4,9 @@ https://hub.docker.com/r/behance/docker-nginx/tags/
 
 Provides base OS, patches and stable nginx for quick and easy spinup.
 
-- Ubuntu used by default
-- Alpine builds available tagged as `-alpine`
-- Centos builds available tagged as `-centos`
+- Ubuntu 22.04 used by default
+- Alpine builds available tagged as `-alpine` **DEPRECATED**
+- Centos builds available tagged as `-centos` **DEPRECATED**
 
 
 [S6](https://github.com/just-containers/s6-overlay) process supervisor is used for `only` for zombie reaping (as PID 1), boot coordination, and termination signal translation

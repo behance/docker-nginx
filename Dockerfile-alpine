@@ -1,3 +1,7 @@
+################################################################################
+# The AlpineOS flavor is DEPRECATED and will be removed in a future release
+# Please stop using this variant and use the Ubuntu flavor instead
+################################################################################
 FROM behance/docker-base:5.0.1-alpine
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
