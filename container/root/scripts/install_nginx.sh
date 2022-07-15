@@ -1,9 +1,11 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
+###############################################################################
 # Install nginx per http://nginx.org/en/linux_packages.html#Ubuntu
+###############################################################################
 
-# Install the prerequisites: 
-apt -y update && apt -y install \
+# Install the prerequisites
+apt-get -y install \
   curl \
   gnupg2 \
   ca-certificates \
@@ -29,21 +31,5 @@ echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 
     | tee /etc/apt/preferences.d/99nginx
 
 # Install nginx
-apt -y update && apt -y install nginx-light
-
-# Cleanup
-# Otherwise dpkg will complain with
-# dpkg: warning: while removing python3.10, directory '/usr/lib/python3/dist-packages' not empty so not removed
-rm -rf /usr/lib/python3/dist-packages
-
-apt-get remove --purge -yq \
-  curl \
-  gnupg2 \
-  lsb-release \
-  manpages \
-  manpages-dev \
-  man-db \
-  patch \
-  make \
-  unattended-upgrades \
-  python*
+apt-get -y update && apt-get -y install \
+  nginx-light
