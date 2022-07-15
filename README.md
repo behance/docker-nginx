@@ -27,6 +27,10 @@ NOTE: Nginx is exposed and bound to an unprivileged port, `8080`
 ownership to the non root user through `container/root/scripts/set_permissions.sh`.
 This is to ensure that the image can be run under a non root user.
 
+# Quick Start
+
+See [Quick Start](docs/quick_start.md)
+
 # Docs
 
 * [Container Organization](docs/container_organization.md)
@@ -35,3 +39,4 @@ This is to ensure that the image can be run under a non root user.
 * [Long-running processes (workers + crons)](docs/long_running.md)
 * [Shutdown Behavior](docs/shutdown_behavior.md)
 * [Release Management](docs/release_management.md)
+* [Troubleshooting](docs/troubleshooting.md)
