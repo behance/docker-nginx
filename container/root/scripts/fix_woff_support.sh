@@ -4,7 +4,12 @@
 sed -i "/application\/font-woff/d" /etc/nginx/mime.types
 
 # Detects if woff support is already present
-if grep -Fxq "font/woff" /etc/nginx/mime.types
+# From: https://linux.die.net/man/1/grep
+# -F - Interpret PATTERN as a list of fixed strings, separated by newlines, 
+#      any of which is to be matched
+# -q - Quiet; do not write anything to standard output. Exit immediately with
+#      zero status if any match is found, even if an error was detected
+if grep -Fq "font/woff" /etc/nginx/mime.types
 then
   echo "Woff type detected, no changes necessary"
 else

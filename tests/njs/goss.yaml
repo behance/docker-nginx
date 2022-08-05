@@ -1,0 +1,8 @@
+http:
+  http://localhost:8080/hello_njs:
+    status: 200
+    allow-insecure: true
+    timeout: 5000
+    body:
+      - Hello there!
+
