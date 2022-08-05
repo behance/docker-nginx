@@ -1,0 +1,5 @@
+file:
+  /goss/docker_output.log:
+    exists: true
+    contains:
+      - 'enabling nginx njs module'

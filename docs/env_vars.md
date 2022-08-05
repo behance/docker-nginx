@@ -10,6 +10,7 @@ SERVER_APP_NAME | SERVER_APP_NAME='view' | Gets appended to the default logging 
 SERVER_GZIP_OPTIONS | SERVER_GZIP_OPTIONS=1 | Allows default set of static content to be served gzipped
 SERVER_SENDFILE | SERVER_SENDFILE=off | Allows runtime to specify value of nginx's `sendfile` (default, on)
 SERVER_ENABLE_HTTPS | SERVER_ENABLE_HTTPS=true | Enable encrypted transmission using certificates
+SERVER_ENABLE_NGX_HTTP_JS | SERVER_ENABLE_NGX_HTTP_JS=true | Enable nginx njs module (default, false)
 SERVER_KEEPALIVE | SERVER_KEEPALIVE=30 | Define HTTP 1.1's keepalive timeout
 SERVER_WORKER_PROCESSES | SERVER_WORKER_PROCESSES=4 | Set to the number of cores in the machine, or the number of cores allocated to container
 SERVER_WORKER_CONNECTIONS | SERVER_WORKER_CONNECTIONS=2048 | Sets up the number of connections for worker processes
