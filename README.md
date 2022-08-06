@@ -4,7 +4,11 @@ https://hub.docker.com/r/behance/docker-nginx/tags/
 
 Provides base OS, patches and stable nginx for quick and easy spinup.
 
-- Ubuntu 22.04 used by default
+- Ubuntu 20.04 without `nginx-njs` and is used by default
+- Ubuntu 22.04 with `nginx-njs` installed is tagged as `-ubuntu-22.04`
+
+The following builds are **DEPRECATED** and will be removed in a future release
+
 - Alpine builds available tagged as `-alpine` **DEPRECATED**
 - Centos builds available tagged as `-centos` **DEPRECATED**
 
