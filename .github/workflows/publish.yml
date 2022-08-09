@@ -16,10 +16,14 @@ jobs:
         # This is the default variant-less distribution (ex. 3.2.1)
         - Dockerfile: Dockerfile
         # Variant distributions below all have semantic versions + suffix (ex. 3.2.1-alpine)
+        # Alpine is deprecated
         - Dockerfile: Dockerfile-alpine
           suffix: alpine
+        # CentOS is deprecated
         - Dockerfile: Dockerfile-centos
           suffix: centos
+        - Dockerfile: Dockerfile-ubuntu-22.04
+          suffix: ubuntu-22.04
     steps:
       -
         name: Checkout

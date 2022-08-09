@@ -94,3 +94,9 @@ then
   # Add SSL to listen directive
   sed -i "s/^[ ]*listen ${CONTAINER_PORT}/  listen ${CONTAINER_PORT} ssl/" $CONF_NGINX_SITE
 fi
+
+if [[ $SERVER_ENABLE_NGX_HTTP_JS ]];
+then
+  echo "[nginx] enabling nginx njs module"
+  sed -i "s/#load_module/load_module/" $CONF_NGINX_SERVER
+fi

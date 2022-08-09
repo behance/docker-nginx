@@ -11,6 +11,7 @@ jobs:
       matrix:
         props:
         - Dockerfile: Dockerfile
+        - Dockerfile: Dockerfile-ubuntu-22.04
         # - Dockerfile: Dockerfile-alpine
         # - Dockerfile: Dockerfile-centos
         platform:
