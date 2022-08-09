@@ -23,9 +23,9 @@ RUN /bin/bash -e /security_updates.sh && \
     add-apt-repository ppa:ondrej/nginx -y && \
     apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends \
-        nginx-light=1.20.1-2+ubuntu20.04.1+deb.sury.org+1 \
+        nginx-light=1.22.0-* \
         ca-certificates \
-        libnginx-mod-brotli=1.20.1-2+ubuntu20.04.1+deb.sury.org+1 \
+        libnginx-mod-brotli=1.22.0-* \
     && \
     apt-get remove --purge -yq \
         manpages \
