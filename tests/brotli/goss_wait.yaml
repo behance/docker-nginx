@@ -1,0 +1,7 @@
+file:
+  /goss/docker_output.log:
+    exists: true
+    contains:
+      # When starting up the container, this line should show up
+      # if SERVER_ENABLE_NGX_BROTLI=true
+      - '[nginx] enabling nginx brotli module'

@@ -1,5 +1,7 @@
 gossfile:
   /tests/common/nginx.goss.yaml: {}
+  # To be enabled when we add support for Ubuntu 22.04
+  # /tests/ubuntu/brotli.goss.yaml: {}
 
 user:
   www-data:

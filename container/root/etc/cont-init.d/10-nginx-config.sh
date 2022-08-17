@@ -33,17 +33,6 @@ then
   sed -i "s/\#gzip/gzip/" $CONF_NGINX_SERVER
 fi
 
-if [[ $SERVER_ENABLE_BROTLI ]]
-then
-  echo "[nginx] enabling brotli"
-  TYPES_TO_COMPRESS="application\/javascript application\/json application\/rss+xml application\/vnd.ms-fontobject application\/x-font application\/x-font-opentype application\/x-font-otf application\/x-font-truetype application\/x-font-ttf application\/xhtml+xml application\/xml font\/opentype font\/otf font\/ttf image\/svg+xml image\/x-icon text\/css text\/javascript text\/plain text\/xml;"
-  sed -i "s|#plugins_placeholder|#plugins_placeholder\nload_module modules/ngx_http_brotli_filter_module.so;\nload_module modules/ngx_http_brotli_static_module.so;\n|" $CONF_NGINX_SERVER
-  sed -i "s/#brotli on;/brotli on;\n\
-    brotli_static on;\n\
-    brotli_comp_level 6;\n\
-    brotli_types ${TYPES_TO_COMPRESS}/" $CONF_NGINX_SERVER
-fi
-
 if [[ $SERVER_KEEPALIVE ]]
 then
   echo "[nginx] setting keepalive ${SERVER_KEEPALIVE}"
@@ -95,8 +84,35 @@ then
   sed -i "s/^[ ]*listen ${CONTAINER_PORT}/  listen ${CONTAINER_PORT} ssl/" $CONF_NGINX_SITE
 fi
 
+if [[ $SERVER_ENABLE_NGX_BROTLI ]];
+then
+  echo "[nginx] enabling nginx brotli module"
+  # Enable the brotli module
+  sed -i "s/#load_module modules\/ngx_http_brotli_/load_module modules\/ngx_http_brotli_/" $CONF_NGINX_SERVER
+
+  # Enable brotli-specific configuration. All brotli configs begin with brotli*
+  # Ref: https://github.com/google/ngx_brotli
+  sed -i "s/#brotli/brotli/" $CONF_NGINX_SERVER
+fi
+
 if [[ $SERVER_ENABLE_NGX_HTTP_JS ]];
 then
+  # Enable the njs module
   echo "[nginx] enabling nginx njs module"
-  sed -i "s/#load_module/load_module/" $CONF_NGINX_SERVER
+  sed -i "s/#load_module modules\/ngx_http_js_/load_module modules\/ngx_http_js_/" $CONF_NGINX_SERVER
+fi
+
+# Useful when you need to debug the contents of nginx.conf
+#
+# Should be the last entry in this script to ensure that all prior
+# modifications have been applied
+if [[ $SERVER_SHOW_NGINX_CONF ]];
+then
+  if [[ -f "$CONF_NGINX_SERVER" ]];
+  then
+    echo ""
+    echo "*** SERVER_SHOW_NGINX_CONF is set. Dumping $CONF_NGINX_SERVER ***"
+    echo ""
+    cat $CONF_NGINX_SERVER
+  fi
 fi

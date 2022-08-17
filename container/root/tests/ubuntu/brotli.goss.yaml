@@ -1,0 +1,20 @@
+file:
+  /etc/nginx/nginx.conf:
+    exists: true
+    # By default, the brotli configs are specified in nginx.conf but disabled
+    contains:
+      - '/#load_module\s*modules\/ngx_http_brotli_filter_module\.so;/'
+      - '/#load_module\s*modules\/ngx_http_brotli_static_module\.so;/'
+      - '/#brotli\s*on;/'
+      - '/#brotli_static\s*on;/'
+      - '/#brotli_comp_level\s*6;/'
+      - '/#brotli_types/'
+    title: /etc/nginx/nginx.conf should exist and contain brotli-specific configs
+  /usr/lib/nginx/modules/ngx_http_brotli_filter_module.so:
+    exists: true
+    owner: root
+    title: /usr/lib/nginx/modules/ngx_http_brotli_filter_module.so should exist and owned by root
+  /usr/lib/nginx/modules/ngx_http_brotli_static_module.so:
+    exists: true
+    owner: root
+    title: /usr/lib/nginx/modules/ngx_http_brotli_static_module.so should exist and owned by root
