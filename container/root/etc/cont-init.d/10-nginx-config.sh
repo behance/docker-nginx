@@ -84,8 +84,35 @@ then
   sed -i "s/^[ ]*listen ${CONTAINER_PORT}/  listen ${CONTAINER_PORT} ssl/" $CONF_NGINX_SITE
 fi
 
+if [[ $SERVER_ENABLE_NGX_BROTLI ]];
+then
+  echo "[nginx] enabling nginx brotli module"
+  # Enable the brotli module
+  sed -i "s/#load_module modules\/ngx_http_brotli_/load_module modules\/ngx_http_brotli_/" $CONF_NGINX_SERVER
+
+  # Enable brotli-specific configuration. All brotli configs begin with brotli*
+  # Ref: https://github.com/google/ngx_brotli
+  sed -i "s/#brotli/brotli/" $CONF_NGINX_SERVER
+fi
+
 if [[ $SERVER_ENABLE_NGX_HTTP_JS ]];
 then
+  # Enable the njs module
   echo "[nginx] enabling nginx njs module"
-  sed -i "s/#load_module/load_module/" $CONF_NGINX_SERVER
+  sed -i "s/#load_module modules\/ngx_http_js_/load_module modules\/ngx_http_js_/" $CONF_NGINX_SERVER
+fi
+
+# Useful when you need to debug the contents of nginx.conf
+#
+# Should be the last entry in this script to ensure that all prior
+# modifications have been applied
+if [[ $SERVER_SHOW_NGINX_CONF ]];
+then
+  if [[ -f "$CONF_NGINX_SERVER" ]];
+  then
+    echo ""
+    echo "*** SERVER_SHOW_NGINX_CONF is set. Dumping $CONF_NGINX_SERVER ***"
+    echo ""
+    cat $CONF_NGINX_SERVER
+  fi
 fi

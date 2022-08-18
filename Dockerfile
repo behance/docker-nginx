@@ -2,10 +2,15 @@ FROM behance/docker-base:5.0.1-ubuntu-20.04
 
 # Use in multi-phase builds, when an init process requests for the container to gracefully exit, so that it may be committed
 # Used with alternative CMD (worker.sh), leverages supervisor to maintain long-running processes
+#
+# NGINX_VERSION is the MAJOR.MINOR.PATCH version available from upstream
+# providers (https://launchpad.net/~ondrej/+archive/ubuntu/nginx) at the time
+# of the build
 ENV CONTAINER_ROLE=web \
     CONTAINER_PORT=8080 \
     CONF_NGINX_SITE="/etc/nginx/sites-available/default" \
     CONF_NGINX_SERVER="/etc/nginx/nginx.conf" \
+    NGINX_VERSION="1.22.0" \
     NOT_ROOT_USER=www-data \
     S6_KILL_FINISH_MAXTIME=55000
 
@@ -23,8 +28,9 @@ RUN /bin/bash -e /security_updates.sh && \
     add-apt-repository ppa:ondrej/nginx -y && \
     apt-get update -yqq && \
     apt-get install -yqq --no-install-recommends \
-        nginx-light \
+        nginx-light=${NGINX_VERSION}-* \
         ca-certificates \
+        libnginx-mod-brotli=${NGINX_VERSION}-* \
     && \
     apt-get remove --purge -yq \
         manpages \

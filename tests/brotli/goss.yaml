@@ -1,0 +1,23 @@
+file:
+  /etc/nginx/nginx.conf:
+    exists: true
+    contains:
+      - '/load_module\s*modules\/ngx_http_brotli_filter_module\.so;/'
+      - '/load_module\s*modules\/ngx_http_brotli_static_module\.so;/'
+      - '/brotli\s*on;/'
+      - '/brotli_static\s*on;/'
+      - '/brotli_comp_level\s*6;/'
+      - '/brotli_types/'
+    title: brotli-specific modules and configs should be enabled
+http:
+  http://localhost:8080/:
+    status: 200
+    allow-insecure: true
+    request-headers:
+      - "Accept-Encoding: gzip, deflate, br"
+    timeout: 5000
+    headers:
+      # When you pass in the Accept-Encoding header
+      # the response header will include "Content-Encoding: br"
+      # and the output will be compressed/binary
+      - "Content-Encoding: br"
