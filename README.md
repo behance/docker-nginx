@@ -1,16 +1,23 @@
 # docker-nginx
 
-https://hub.docker.com/r/behance/docker-nginx/tags/
-
 Provides base OS, patches and stable nginx for quick and easy spinup.
 
-- Ubuntu 20.04 without `nginx-njs` and is used by default
-- Ubuntu 22.04 with `nginx-njs` installed is tagged as `-ubuntu-22.04`
+https://hub.docker.com/r/behance/docker-nginx/tags/
+
+| OS     | Version  | Nginx Package | Tag            |
+| ------ | -------- | ------------- | -------------- |
+| ubuntu | 20.04    | nginx-light   | None           |
+| ubuntu | 22.04    | nginx         | `-ubuntu-22.04 |
 
 The following builds are **DEPRECATED** and will be removed in a future release
 
 - Alpine builds available tagged as `-alpine` **DEPRECATED**
 - Centos builds available tagged as `-centos` **DEPRECATED**
+
+| Module      | ubuntu-20.04   | ubuntu-22.04    |
+| ----------- | -------------- | --------------- |
+| brotli      | &check;        | n/a             |
+| njs         | n/a            | n/a             |
 
 [S6](https://github.com/just-containers/s6-overlay) process supervisor is used
 for `only` for zombie reaping (as PID 1), boot coordination, and termination
